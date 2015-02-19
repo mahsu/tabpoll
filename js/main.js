@@ -2,8 +2,8 @@ $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
         for (var i=0; i<response.length; i++) {
             var html = '<li class="link-item">'+
-            '<a href="' + response[i][0] + '">'+
-            '<i><img src="http://96wefm.com/sites/all/themes/WEFM/images/fb-button.png" /></i>'+
+            '<a href="http://' + response[i][0] + '">'+
+            '<i><img src="chrome://favicon/http://' + response[i][0] + '" /></i>'+
             '<div class="contain">'+
             '<div class="title">' + response[i][0] + '</div>'+
             '<div class="link">' + response[i][0] + '</div>'+
@@ -28,6 +28,10 @@ var lastDate = new Date().getTime();
 
 chrome.storage.sync.get("given_name", function(item) {
     $('#name').text(item.given_name);
+});
+
+chrome.storage.sync.get(function(item) {
+  console.log(item);
 });
 
 $("#scroll-wrapper").scroll(function (e) {
@@ -92,7 +96,50 @@ $(document).ready(function () {
     setInterval(function () {
         clock.update();
     }, 1000);
+    getWeather();
+    $('#time').animate({
+      opacity: 1
+    }, 500);
+    $('#time_hidden').animate({
+      opacity: 1
+    }, 500);
+    $('#divider').animate({
+      width: "80%",
+      opacity: 1
+    }, 500);
 });
+
+function getWeather() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      $.ajax({
+        url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
+        success: function(data) {
+          var location = data.name;
+          var temp = parseInt(data.main.temp) + " F";
+          var desc = data.weather[0].description;
+          var img;
+          $('#location').text(location);
+          $('#temp').text(temp);
+          if (desc.indexOf("cloudy") > -1) {
+            img = "icons/Cloud.svg"
+          } else if (desc.indexOf("sunny") > -1) {
+            img = "icons/Sun.svg"
+          } else if (desc.indexOf("partly")  > -1 || desc.indexOf("mostly")  > -1) {
+            img = "icons/Cloud-Sun.svg"
+          } else {
+            img = "icons/Sun.svg"
+          }
+          $('#weather-icon').attr('src', img);
+          $('.weather').animate({
+            opacity: 1
+          }, 300);
+          console.log(data);
+        }
+      });
+    });
+  }
+}
 
 function Clock() {
     var time = getTime();
