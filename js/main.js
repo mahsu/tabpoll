@@ -65,13 +65,14 @@ function adjustPadding() {
 
 function getTime() {
     var today = new Date();
-    var h = today.getHours() + "";
+    var h = today.getHours();
     if (h >= 13) {
         h = h - 12;
     }
     if (h == 0) {
         h = 12;
     }
+    h = h + "";
     var m = today.getMinutes() + "";
     var s = today.getSeconds() + "";
     if (h.length < 2) {
