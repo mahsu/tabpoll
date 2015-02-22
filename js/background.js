@@ -15,6 +15,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
         var calendars;
         var events = [];
         var itree = new intervalTree(Date.now()/10000);
+        var weatherData;
 
         if (current_token) {
             chrome.identity.removeCachedAuthToken({ token: current_token }, function(){});
@@ -183,6 +184,20 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
 
         function init() {
             console.log("init()", "Initializing");
+
+            // Get weather data
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    $.ajax({
+                        url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
+                        success: function(data) {
+                            console.log("init()", "Got weather data");
+                            weatherData = data;
+                        }
+                    });
+                });
+            }
+
             get_history(function(err, visits) {
                 console.log("init()", "Got history data");
                 var re = /^(?:ftp|https?):\/\/(?:[^@:\/]*@)?([^:\/]+)/;
@@ -298,6 +313,8 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                             return a.score - b.score;
                         });
                         sendResponse(results);
+                    } else if (request.action == "getWeather") {
+                        sendResponse(weatherData);
                     }
                 });
             });
