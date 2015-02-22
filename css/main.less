@@ -1,0 +1,203 @@
+@mainText: #555;
+@font-face {
+  font-family: existence;
+  src: url(font/Existence-Light.otf);
+}
+
+html, body {
+  position: absolute;
+  margin: 0;
+  width: 100%;
+  top: 0px;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Khula', sans-serif;
+  font-size: 20px;
+  color: @mainText;
+}
+
+#bg-frame {
+  opacity: 0;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+#scroll-wrapper {
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  overflow: scroll;
+  //width: 150%;
+  width: 100%;
+  //margin-left: -25%;
+}
+
+.gradient {
+  position: absolute;
+  width: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#top-gradient {
+  top: 0px;
+  height: 150px;
+}
+
+.top-gradient {
+  background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+}
+
+#bottom-gradient {
+  bottom: 0px;
+  height: 200px;
+}
+
+.bottom-gradient {
+  background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 20%, rgba(255,255,255,1) 92%, rgba(255,255,255,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(20%,rgba(255,255,255,0)), color-stop(92%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 20%,rgba(255,255,255,1) 92%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 20%,rgba(255,255,255,1) 92%,rgba(255,255,255,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 20%,rgba(255,255,255,1) 92%,rgba(255,255,255,1) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 20%,rgba(255,255,255,1) 92%,rgba(255,255,255,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+}
+
+#top-clock-gradient {
+  position: absolute;
+  top: 50px;
+  height: 25px;
+  width: 100%;
+}
+
+#bottom-clock-gradient {
+  position: absolute;
+  top: 130px;
+  height: 30px;
+  width: 100%;
+}
+
+#time, #time_hidden {
+  height: 150px;
+  z-index: 2;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  margin-top: 50px;
+  overflow: hidden;
+  .number {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    font-size: 80px;
+    color: #333;
+  }
+  .date {
+    position: absolute;
+    display: inline-block;
+    top: 90px;
+    margin-left: 15px;
+    line-height: 25px;
+    text-align: left;
+  }
+  .name {
+    margin-top: -23px;
+    font-size: 24px;
+  }
+}
+
+#time_hidden {
+  margin-top: -140px;
+  height: 100px;
+  .number {
+    padding-top: 80px;
+  }
+}
+
+#divider {
+  top: 30px;
+  position: relative;
+  width: 80%;
+  max-width: 800px;
+}
+
+#suggestions {
+  margin: auto;
+  width: 90%;
+  max-width: 600px;
+  margin-bottom: 150px;
+  margin-top: 50px;
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    li {
+      padding: 5px;
+      white-space: nowrap;
+    }
+  }
+  .link-item {
+    position: relative;
+    opacity: 0;
+    height: 60px;
+    top: 30px;
+    padding: 0px;
+    transition: top 0.5s ease, opacity 0.5s ease, padding 0.3s ease;
+    &.in {
+      height: 50px;
+      opacity: 1;
+      top: 0px;
+    }
+    &.scrolling {
+      padding: 5px 0px;
+    }
+    a {
+      i {
+        float: left;
+        img {
+          position: relative;
+          top: 3px;
+          height: 20px;
+          margin-right: 7px;
+        }
+      }
+      width: 100%;
+      text-decoration: none;
+      color: @mainText;
+      .contain {
+        overflow: hidden;
+      }
+      .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .link {
+        font-size: 12px;
+        color: #888;
+        overflow: hidden;
+        margin-top: -8px;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+}

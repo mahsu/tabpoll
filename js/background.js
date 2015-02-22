@@ -11,12 +11,10 @@ requirejs(['async','node/interval-tree/IntervalTree'],
         //jQuery, canvas and the app/sub module are all
         //loaded and can be used here now.
         var current_token;
-        var user_email;
-        var user_name;
+        var user_data;
         var calendars;
         var events = [];
-
-
+        var itree = new intervalTree(Date.now()/10000);
 
         if (current_token) {
             chrome.identity.removeCachedAuthToken({ token: current_token }, function(){});
@@ -49,11 +47,8 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                         "access_token": current_token
                     },
                     success: function(data) {
-                        user_email = data.email;
-                        user_name = data.given_name;
-                        console.log(data);
-                        console.log(user_email);
-                        //events = get_cal_events();
+                        user_data = data;
+                        console.log(user_data);
                         get_history();
                         get_all_cal_events();
 
@@ -162,6 +157,20 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                         return evt.recurrence !== undefined;
                     });
                     console.log(filtered_events);
+                    async.eachSeries(filtered_events, function(evt, callback) {
+                        console.log(evt.start.dateTime);
+                        var start = Date.parse(evt.start.dateTime || evt.start.date);
+                        var end = Date.parse(evt.end.dateTime || evt.end.date);
+                        if (start < end) {
+                            console.log([start, end, evt.summary]);
+                            itree.add([start / 10000, end / 10000, evt.summary]);
+                        }
+                        callback();
+                    }, function() {
+                        console.log(itree.search(142176470,142196470));
+                        console.log(itree);
+                    });
+
                 });
                 //while (count !=max){console.log(count,max);}
 
