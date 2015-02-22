@@ -48,10 +48,11 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                     },
                     success: function(data) {
                         user_data = data;
-                        console.log(user_data);
-                        get_history();
-                        get_all_cal_events();
-
+                        chrome.storage.sync.set(user_data, function() {
+                            console.log(user_data);
+                            get_history();
+                            get_all_cal_events();
+                        })
                     }
                 });
 
