@@ -1,5 +1,5 @@
 @font-face{font-family:existence;src:url(font/Existence-Light.otf)}html,body{position:absolute;margin:0;width:100%;top:0;height:100%;overflow:hidden;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
-body{font-family:'Khula',sans-serif;font-size:20px;color:#555}
+body{font-family:'Khula',sans-serif;font-size:20px;color:#555;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 #bg-frame{opacity:0;position:absolute;top:0;width:100%;height:100%}
 #scroll-wrapper{height:100%;position:absolute;top:0;overflow:scroll;width:100%}
 .gradient{position:absolute;width:100%;pointer-events:none;z-index:1}

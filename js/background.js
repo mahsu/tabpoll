@@ -160,13 +160,14 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         //if recurring events not expanded
                         //return evt.recurrence !== undefined;
                     });
+                    console.log("filtered all events")
                     console.log(filtered_events);
                     async.eachSeries(filtered_events, function(evt, callback) {
                         //console.log(evt.start.dateTime);
                         var start = Date.parse(evt.start.dateTime || evt.start.date);
                         var end = Date.parse(evt.end.dateTime || evt.end.date);
                         if (start < end) {
-                            console.log([start, end, evt.summary]);
+                            //console.log([start, end, evt.summary]);
                             itree.add([start / 10000, end / 10000, evt.summary]);
                         }
                         callback();
@@ -192,6 +193,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     var date = new Date(item.visitTime);
                     var obj = dateToObj(date);
                     obj.url = item.url;
+                    obj.visitTime = item.visitTime;
                     var host = getHost(item.url);
                     if (!sites.hasOwnProperty(host)) {
                         sites[host] = [];
@@ -236,19 +238,37 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     return dist;
                 };
 
+                function compareEvents(current, pastArray) {
+                    var allEvents = {};
+                    var commonEvents = [];
+                    pastArray.forEach(function(past) {
+                        past.forEach(function(event) {
+                            allEvents[event.data[2]] = true;
+                        });
+                    });
+                    console.log(Object.keys(allEvents).length, allEvents);
+                    current.forEach(function(event) {
+                        if (allEvents[event.data[2]]) {
+                            commonEvents.push(event.data[2]);
+                        }
+                    });
+                    return commonEvents;
+                }
+
                 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     console.log("init()", "Incoming message", request, sender);
                     if (request.action == "getLinks") {
                         var testObj = dateToObj(new Date(request.date));
+                        var currentEvents = itree.search(request.date / 10000); // convert to 10 second resolution
                         var results = [];
                         for (var host in sites) {
-                            // Limit only to sites with at least 10 visits
+                            // Limit only to sites with at least 20 visits
                             if (sites[host].length < 20) {
                                 continue;
                             }
 
                             var options = {
-                                k: 5,
+                                k: 50,
                                 weights: {
                                     dayOfWeek: 2,
                                     minutesPastMidnight: 1,
@@ -258,14 +278,25 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
 
                             var knnResults = alike(testObj, sites[host], options);
 
-                            var totalDistance = 0;
+                            var score = 0;
                             for (var i=0; i<knnResults.length; i++) {
-                                totalDistance += distance(testObj, knnResults[i]);
+                                score += distance(testObj, knnResults[i]);
                             }
-                            results.push([host, totalDistance]);
+                            var commonEvents = compareEvents(currentEvents, knnResults.map(function(visit) {
+                                return itree.search(visit.visitTime / 10000); // convert to 10 second resolution
+                            }));
+                            if (commonEvents.length > 0) {
+                                console.log("found", commonEvents, host);
+                                score -= 1;
+                            }
+                            results.push({
+                                host: host,
+                                score: score,
+                                commonEvents: commonEvents
+                            });
                         }
                         results.sort(function(a, b) {
-                            return a[1] - b[1];
+                            return a.score - b.score;
                         });
                         sendResponse(results);
                     }

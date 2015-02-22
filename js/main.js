@@ -1,15 +1,15 @@
 $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
         for (var i=0; i<response.length; i++) {
-            var color = hashColor("This is an event name");
+            var color = hashColor(response[i].commonEvents);
             var html = '<li class="link-item">'+
-            '<a href="http://' + response[i][0] + '">'+
-            '<i><img src="chrome://favicon/http://' + response[i][0] + '" /></i>'+
+            '<a href="http://' + response[i].host + '">'+
+            '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
             '<div class="colorBar" style="background-color: rgb(' + color.r + ',' + color.g + ',' + color.b + ')"></div>' +
             '<div class="contain">'+
-            '<div class="title">' + response[i][0] + '</div>'+
-            '<div class="link">' + response[i][0] + '</div>' +
-            '<div class="event">This is an event name</div>'+
+            '<div class="title">' + response[i].host + response[i].commonEvents + '</div>'+
+            '<div class="link">' + response[i].host + '</div>'+
+            '<div class="event">' + response[i].commonEvents + '</div>'+
             '</div>'+
             '</a>'+
             '</li>';
@@ -77,13 +77,14 @@ function adjustPadding() {
 
 function getTime() {
     var today = new Date();
-    var h = today.getHours() + "";
+    var h = today.getHours();
     if (h >= 13) {
         h = h - 12;
     }
     if (h == 0) {
         h = 12;
     }
+    h = h + "";
     var m = today.getMinutes() + "";
     var s = today.getSeconds() + "";
     if (h.length < 2) {
