@@ -6,6 +6,10 @@ $(window).load(function() {
       next();
     });
   }
+
+  chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
+    console.log(response);
+  });
 });
 
 
