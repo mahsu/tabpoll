@@ -1,57 +1,145 @@
-var current_token;
-var user_email;
-var user_name;
+requirejs.config({
+    baseUrl: 'js',
+    paths: {
+        node: 'node_modules'
+    }
+});
 
-if (current_token) {
-    chrome.identity.removeCachedAuthToken({ token: current_token }, function(){});
+// Start the main app logic.
+requirejs(['node/interval-tree/IntervalTree'],
+    function   (intervalTree) {
+        //jQuery, canvas and the app/sub module are all
+        //loaded and can be used here now.
+        var current_token;
+        var user_email;
+        var user_name;
+        var calendars;
+        var events = [];
 
-    // Make a request to revoke token in the server
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://accounts.google.com/o/oauth2/revoke?token=' +
-    current_token);
-    xhr.send();
 
-    current_token = 0;
-    console.log("Revoked token.")
-}
 
-chrome.identity.getAuthToken({ 'interactive': true }, function(token) {
-    if (chrome.runtime.lastError) {
-        console.log(chrome.runtime.lastError);
-        //changeState(STATE_START);
-    } else {
-        current_token = token;
-        console.log('Token acquired:' + current_token +
-        '. See chrome://identity-internals for details.');
+        if (current_token) {
+            chrome.identity.removeCachedAuthToken({ token: current_token }, function(){});
 
-        //GET the user's email
-        $.ajax({
-            method: 'GET',
-            url: "https://www.googleapis.com/oauth2/v1/userinfo",
-            data: {
-                "alt": "json",
-                "scope":"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-                "access_token": current_token
-            },
-            success: function(data) {
-                user_email = data.email;
-                user_name = data.given_name;
-                console.log(data);
-                console.log(user_email);
+            // Make a request to revoke token in the server
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://accounts.google.com/o/oauth2/revoke?token=' +
+            current_token);
+            xhr.send();
+
+            current_token = 0;
+            console.log("Revoked token.")
+        }
+
+        chrome.identity.getAuthToken({ 'interactive': true }, function(token) {
+            if (chrome.runtime.lastError) {
+                console.log(chrome.runtime.lastError);
+                //changeState(STATE_START);
+            } else {
+                current_token = token;
+                console.log('Token acquired:' + current_token +
+                '. See chrome://identity-internals for details.');
+
+                //GET the user's email
+                $.ajax({
+                    method: 'GET',
+                    url: "https://www.googleapis.com/oauth2/v1/userinfo",
+                    data: {
+                        "alt": "json",
+                        "access_token": current_token
+                    },
+                    success: function(data) {
+                        user_email = data.email;
+                        user_name = data.given_name;
+                        console.log(data);
+                        console.log(user_email);
+                        //events = get_cal_events();
+                        get_history();
+                        get_all_cal_events();
+
+                    }
+                });
 
             }
         });
 
-    }
-});
+        function get_history() {
+            var d = new Date();
+            var max_start = Date.now();
+            var min_start = d.setMonth(d.getMonth()-2);
+            // get history data
+            chrome.history.search({
+                text: "",
+                startTime: min_start,
+                endTime: max_start,
+                maxResults: 1e6
+            }, function(results) {
+                console.log(results);
+            });
+        }
 
-// get history data
-var d = new Date();
-chrome.history.search({
-    text: "",
-    startTime: d.setMonth(d.getMonth()-2),
-    endTime: Date.now(),
-    maxResults: 1e6
-    }, function(results) {
-    console.log(results);
-});
+
+        function get_cal_list(callback) {
+
+            $.ajax({
+                method: 'GET',
+                url: "https://www.googleapis.com/calendar/v3/users/me/calendarList",
+                data: {
+                    "alt": "json",
+                    "access_token": current_token,
+                    "max_results": 10//max=250
+
+                },
+                success: function(cal_list) {
+                    console.log(cal_list);
+                    callback(cal_list, null);
+
+                },
+                error: function(err) {
+                    console.log(err);
+                    callback(null, err);
+                }
+            });
+        }
+
+        function get_all_cal_events() {
+
+            var d = new Date();
+            var max_start = d.setMonth(d.getMonth()+1);
+            max_start = new Date(max_start).toISOString();
+            var min_start = d.setMonth(d.getMonth()-2);
+            min_start = new Date(min_start).toISOString();
+
+            get_cal_list(function (calendar_list, err) {
+                if (err) console.log(err);
+                calendars = calendars || calendar_list;
+                console.log(calendars);
+                calendars.items.forEach(function(cal) {
+                    var cal_id = cal.id;
+                    $.ajax({
+                        method: 'GET',
+                        url: "https://www.googleapis.com/calendar/v3/calendars/" + cal_id + "/events",
+                        data: {
+                            "alt": "json",
+                            "access_token": current_token,
+                            "max_results": 2500,
+                            "startTime": min_start,
+                            "endTime": max_start,
+                            "singleEvents": false
+                        },
+                        success: function(cal_list) {
+                            console.log(cal_list);
+                            events.concat(cal_list);
+
+                        }
+                    })
+
+                });
+            });
+
+
+
+
+        }
+    });
+
