@@ -11,7 +11,7 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  //"key": "aphibfmodondpnkpfclpjfhhdheldenn",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvYzq3dEfFaBMJCVMIBCq+9EbZWTkjjt6TdxL+BpcAw8GdohCpUNgn/AOC12C/diO1RDYYW/YxYLK1IxSQHuccQfyrAgOsOAdljQbNHf6eX2GpHXV5qhutxFN9L+qsWiSRLM3OsEDwq2gnPySu95UyaE+3GW+0+DjLGa6nHiFQIFbwbfTNUFwHw25QEa5BFJj9/eY8Xt1HzA9tb/h6bzDnEN2X8eQtgXg7xYxiT82pbgUGjyqXrnukjT2GjYk6mVp86RVcyh/YTGMkE94qFfMAdmJukZO9z5L6SYHGcWfN5G1U7ZwChy3u9rZT9z0JSOYPcWwvZp5roKMmqSGdyI92QIDAQAB",
   "permissions": [
     "tabs",
     "history",

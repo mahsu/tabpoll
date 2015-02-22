@@ -143,6 +143,9 @@ requirejs(['async','node/interval-tree/IntervalTree'],
 
                 }, function() {
                     console.log(events);
+                    var filtered_events = events.filter(function(evt){
+                        evt.
+                    }) //recurrence
                 });
                 //while (count !=max){console.log(count,max);}
 
