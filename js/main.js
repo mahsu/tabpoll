@@ -16,6 +16,10 @@ chrome.storage.sync.get("given_name", function(item) {
     $('#name').text(item.given_name);
 });
 
+chrome.storage.sync.get(function(item) {
+  console.log(item);
+});
+
 $("#scroll-wrapper").scroll(function (e) {
     /*var delayInMs = e.timeStamp - lastDate;
      var offset = e.target.scrollTop - lastOffset;
@@ -77,7 +81,50 @@ $(document).ready(function () {
     setInterval(function () {
         clock.update();
     }, 1000);
+    getWeather();
+    $('#time').animate({
+      opacity: 1
+    }, 500);
+    $('#time_hidden').animate({
+      opacity: 1
+    }, 500);
+    $('#divider').animate({
+      width: "80%",
+      opacity: 1
+    }, 500);
 });
+
+function getWeather() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      $.ajax({
+        url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
+        success: function(data) {
+          var location = data.name;
+          var temp = parseInt(data.main.temp) + " F";
+          var desc = data.weather[0].description;
+          var img;
+          $('#location').text(location);
+          $('#temp').text(temp);
+          if (desc.indexOf("cloudy") > -1) {
+            img = "icons/Cloud.svg"
+          } else if (desc.indexOf("sunny") > -1) {
+            img = "icons/Sun.svg"
+          } else if (desc.indexOf("partly")  > -1 || desc.indexOf("mostly")  > -1) {
+            img = "icons/Cloud-Sun.svg"
+          } else {
+            img = "icons/Sun.svg"
+          }
+          $('#weather-icon').attr('src', img);
+          $('.weather').animate({
+            opacity: 1
+          }, 300);
+          console.log(data);
+        }
+      });
+    });
+  }
+}
 
 function Clock() {
     var time = getTime();
