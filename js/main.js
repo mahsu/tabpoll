@@ -111,19 +111,74 @@ function getTime() {
     if (s.length < 2) {
         s = "0" + s;
     }
-    return [h[0], h[1], m[0], m[1], s[0], s[1]];
+    arr = [h[0], h[1], m[0], m[1], s[0], s[1]];
+
+    var day_of_week = today.getDay();
+    var day = today.getDate();
+    var month = today.getMonth();
+    if (day_of_week == 0) {
+        day_of_week = "Sunday";
+    } else if (day_of_week == 1) {
+        day_of_week = "Monday";
+    } else if (day_of_week == 2) {
+        day_of_week = "Tuesday";
+    } else if (day_of_week == 3) {
+        day_of_week = "Wednesday";
+    } else if (day_of_week == 4) {
+        day_of_week = "Thursday";
+    } else if (day_of_week == 5) {
+        day_of_week = "Friday";
+    } else if (day_of_week == 6) {
+        day_of_week = "Saturday";
+    }
+    if (month == 0) {
+        month = "Jan"
+    } else if (month == 1) {
+        month = "Feb"
+    } else if (month == 2) {
+        month = "Mar"
+    } else if (month == 3) {
+        month = "Apr"
+    } else if (month == 4) {
+        month = "May"
+    } else if (month == 5) {
+        month = "Jun"
+    } else if (month == 6) {
+        month = "Jul"
+    } else if (month == 7) {
+        month = "Aug"
+    } else if (month == 8) {
+        month = "Sep"
+    } else if (month == 9) {
+        month = "Oct"
+    } else if (month == 10) {
+        month = "Nov"
+    } else if (month == 11) {
+        month = "Dec"
+    }
+    $("#date").html(day_of_week + "<br/>" + month + " " + day);
+    var hour = today.getHours();
+    var greeting;
+    if (hour < 12) {
+        greeting = "Good morning"
+    } else if (hour > 18) {
+        greeting = "Good evening"
+    } else {
+        greeting = "Good afternoon"
+    }
+    $("#greeting").text(greeting);
+
+    return arr;
 }
 
 $(document).ready(function () {
-    /*$('#time').animate({
-      opacity: 1
-    }, 500);
-    $('#time_hidden').animate({
-      opacity: 1
-    }, 500);*/
     $('#topbar').animate({
       opacity: 1
     }, 800);
+    $('#suggestions').animate({
+      opacity: 1,
+      top: 0
+    }, 400);
     $('#divider').animate({
       width: "80%",
       opacity: 1
@@ -179,62 +234,6 @@ function Clock() {
     $('#m2_hidden').text(this.m2[1]);
     $('#s1_hidden').text(this.s1[1]);
     $('#s2_hidden').text(this.s2[1]);
-
-    var today = new Date();
-    var day_of_week = today.getDay();
-    var day = today.getDate();
-    var month = "Jan"; //today.getMonth();
-    if (day_of_week == 0) {
-        day_of_week = "Sunday";
-    } else if (day_of_week == 1) {
-        day_of_week = "Monday";
-    } else if (day_of_week == 2) {
-        day_of_week = "Tuesday";
-    } else if (day_of_week == 3) {
-        day_of_week = "Wednesday";
-    } else if (day_of_week == 4) {
-        day_of_week = "Thursday";
-    } else if (day_of_week == 5) {
-        day_of_week = "Friday";
-    } else if (day_of_week == 6) {
-        day_of_week = "Saturday";
-    }
-    if (month == 0) {
-        month = "Jan"
-    } else if (month == 1) {
-        month = "Feb"
-    } else if (month == 2) {
-        month = "Mar"
-    } else if (month == 3) {
-        month = "Apr"
-    } else if (month == 4) {
-        month = "May"
-    } else if (month == 5) {
-        month = "Jun"
-    } else if (month == 6) {
-        month = "Jul"
-    } else if (month == 7) {
-        month = "Aug"
-    } else if (month == 8) {
-        month = "Sep"
-    } else if (month == 9) {
-        month = "Oct"
-    } else if (month == 10) {
-        month = "Nov"
-    } else if (month == 11) {
-        month = "Dec"
-    }
-    $("#date").html(day_of_week + "<br/>" + month + " " + day);
-    var hour = today.getHours();
-    var greeting;
-    if (hour < 12) {
-        greeting = "Good morning"
-    } else if (hour > 18) {
-        greeting = "Good evening"
-    } else {
-        greeting = "Good afternoon"
-    }
-    $("#greeting").text(greeting);
 }
 
 Clock.prototype.update = function () {
