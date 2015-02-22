@@ -6,8 +6,8 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['async','node/interval-tree/IntervalTree'],
-    function   (async, intervalTree) {
+requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
+    function (async, intervalTree, alike) {
         //jQuery, canvas and the app/sub module are all
         //loaded and can be used here now.
         var current_token;
@@ -59,7 +59,7 @@ requirejs(['async','node/interval-tree/IntervalTree'],
             }
         });
 
-        function get_history() {
+        function get_history(callback) {
             var d = new Date();
             var max_start = Date.now();
             var min_start = d.setMonth(d.getMonth()-1);
@@ -84,7 +84,9 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                         callback();
                     });
                 }, function(err) {
-                    console.log(visits);
+                    if (typeof callback === 'function') {
+                        callback(err, visits);
+                    }
                 });
             });
         }
@@ -176,10 +178,102 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                 //while (count !=max){console.log(count,max);}
 
             });
+        }
 
+        function init() {
+            console.log("init()", "Initializing");
+            get_history(function(err, visits) {
+                console.log("init()", "Got history data");
+                var re = /^(?:ftp|https?):\/\/(?:[^@:\/]*@)?([^:\/]+)/;
 
+                var sites = {};
 
+                visits.forEach(function(item) {
+                    var date = new Date(item.visitTime);
+                    var obj = dateToObj(date);
+                    obj.url = item.url;
+                    var host = getHost(item.url);
+                    if (!sites.hasOwnProperty(host)) {
+                        sites[host] = [];
+                    }
+                    sites[host].push(obj);
+                });
+
+                function getHost(url) {
+                    var result = url.match(re);
+                    if (result && result.length > 1) {
+                        return result[1];
+                    } else {
+                        return "";
+                    }
+                }
+
+                function dateToObj(date) {
+                    var obj = {};
+                    obj.dayOfWeek = date.getDay() / 7;
+                    obj.minutesPastMidnight = (date.getHours() * 60 + date.getMinutes()) / (60*24);
+                    obj.minutesPastNoon = (((date.getHours() + 12) % 24) * 60 + date.getMinutes()) / (60*24);
+                    return obj;
+                }
+
+                var distance = function(p1, p2, opts) {
+                    var attr, dist, val, x, y;
+                    dist = 0;
+                    for (attr in p1) {
+                        val = p1[attr];
+                        x = val;
+                        y = p2[attr];
+                        if ((opts != null ? opts.stdv : void 0) && Object.getOwnPropertyNames(opts.stdv).length > 0 && opts.stdv[attr] !== 0) {
+                            x /= opts.stdv[attr];
+                            y /= opts.stdv[attr];
+                        }
+                        if ((opts != null ? opts.weights : void 0) && Object.getOwnPropertyNames(opts.weights).length > 0) {
+                            x *= opts.weights[attr];
+                            y *= opts.weights[attr];
+                        }
+                        dist += Math.pow(x - y, 2);
+                    }
+                    return dist;
+                };
+
+                chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+                    console.log("init()", "Incoming message", request, sender);
+                    if (request.action == "getLinks") {
+                        var testObj = dateToObj(new Date(request.date));
+                        var results = [];
+                        for (var host in sites) {
+                            // Limit only to sites with at least 10 visits
+                            if (sites[host].length < 20) {
+                                continue;
+                            }
+
+                            var options = {
+                                k: 5,
+                                weights: {
+                                    dayOfWeek: 2,
+                                    minutesPastMidnight: 1,
+                                    minutesPastNoon: 1
+                                }
+                            };
+
+                            var knnResults = alike(testObj, sites[host], options);
+
+                            var totalDistance = 0;
+                            for (var i=0; i<knnResults.length; i++) {
+                                totalDistance += distance(testObj, knnResults[i]);
+                            }
+                            results.push([host, totalDistance]);
+                        }
+                        results.sort(function(a, b) {
+                            return a[1] - b[1];
+                        });
+                        sendResponse(results);
+                    }
+                });
+            });
 
         }
+
+        init();
     });
 
