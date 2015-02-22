@@ -10,6 +10,12 @@ body {
   top: 0px;
   height: 100%;
   overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 body {
   font-family: 'Khula', sans-serif;
@@ -96,11 +102,9 @@ body {
 }
 #time,
 #time_hidden {
-  opacity: 0;
   height: 150px;
   z-index: 2;
-  width: 90%;
-  max-width: 600px;
+  width: 360px;
   margin: auto;
   text-align: center;
   margin-top: 50px;
@@ -114,36 +118,45 @@ body {
   font-size: 80px;
   color: #333;
 }
-#time .date,
-#time_hidden .date {
+#topbar {
+  opacity: 0;
+}
+#topbar .date {
   position: absolute;
   display: inline-block;
   top: 90px;
-  margin-left: 15px;
+  margin-left: 370px;
   line-height: 25px;
   text-align: left;
 }
-#time .weather,
-#time_hidden .weather {
+#topbar .weather {
   position: absolute;
   display: inline-block;
   top: 90px;
   line-height: 25px;
   text-align: right;
-  margin-left: -80px;
   opacity: 0;
+  margin-right: 5px;
 }
-#time #weather-icon,
-#time_hidden #weather-icon {
+#topbar .weather div {
+  position: relative;
+  left: -100%;
+  padding-right: 5px;
+}
+#topbar #weather-icon {
   height: 47px;
   margin: -17px;
   margin-right: -7px;
   opacity: 0.8;
 }
-#time .name,
-#time_hidden .name {
-  margin-top: -23px;
+#topbar .name {
+  text-align: center;
+  margin-top: -8px;
   font-size: 24px;
+}
+#time-wrapper {
+  width: 360px;
+  margin: auto;
 }
 #time_hidden {
   margin-top: -140px;
@@ -153,10 +166,9 @@ body {
   padding-top: 80px;
 }
 #divider {
-  top: 30px;
+  top: 0px;
   position: relative;
   width: 0%;
-  opacity: 0;
   max-width: 800px;
 }
 #suggestions {
@@ -164,7 +176,7 @@ body {
   width: 90%;
   max-width: 600px;
   margin-bottom: 150px;
-  margin-top: 50px;
+  margin-top: 0px;
 }
 #suggestions ul {
   list-style-type: none;
@@ -211,6 +223,7 @@ body {
 #suggestions .link-item a .title {
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: -10px;
 }
 #suggestions .link-item a .link {
   font-size: 12px;
@@ -218,6 +231,23 @@ body {
   overflow: hidden;
   margin-top: -8px;
   text-overflow: ellipsis;
+  display: inline-block;
+  max-width: 40%;
+}
+#suggestions .link-item a .event {
+  font-size: 12px;
+  color: #888;
+  display: inline-block;
+  float: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40%;
+}
+#suggestions .link-item a .colorBar {
+  float: right;
+  width: 5px;
+  height: 100%;
+  margin-right: -10px;
 }
 ::-webkit-scrollbar {
   width: 3px;

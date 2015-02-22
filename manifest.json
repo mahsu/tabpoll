@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Tadpole",
+  "name": "Tabpoll",
   "version": "0.1",
-  "description": "",
+  "description": "Intelligently predictive new-tab engine to streamline your browsing experience.",
   "content_security_policy": "script-src 'self'; object-src 'self'",
   "icons": {
     "16": "ico/icon16.png",
