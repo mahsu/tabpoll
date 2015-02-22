@@ -1,4 +1,6 @@
 var current_token;
+var user_email;
+var user_name;
 
 if (current_token) {
     chrome.identity.removeCachedAuthToken({ token: current_token }, function(){});
@@ -28,32 +30,28 @@ chrome.identity.getAuthToken({ 'interactive': true }, function(token) {
             url: "https://www.googleapis.com/oauth2/v1/userinfo",
             data: {
                 "alt": "json",
+                "scope":"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
                 "access_token": current_token
             },
             success: function(data) {
                 user_email = data.email;
-                user_email_comma = user_email.replace(/\./g, ',')
-                console.log(user_email_comma);
+                user_name = data.given_name;
+                console.log(data);
+                console.log(user_email);
 
-                //User authentication with our server
-                /*$.post(
-                    BASE_URL + "/login",
-                    {
-                        email: user_email,
-                        accessToken: current_token
-                    },
-                    function(data) {
-                        console.log("logged in")
-                        connectFirebase();
-                        chrome.runtime.onMessage.addListener(
-                            function(request, sender, sendResponse) {
-                                console.log(request, sender);
-                                if (request.command == "email")
-                                    sendResponse({email: user_email_comma});
-                            });
-                    }
-                );*/
             }
         });
+
     }
+});
+
+// get history data
+var d = new Date();
+chrome.history.search({
+    text: "",
+    startTime: d.setMonth(d.getMonth()-2),
+    endTime: Date.now(),
+    maxResults: 1e6
+    }, function(results) {
+    console.log(results);
 });
