@@ -61,7 +61,7 @@ requirejs(['async','node/interval-tree/IntervalTree'],
         function get_history() {
             var d = new Date();
             var max_start = Date.now();
-            var min_start = d.setMonth(d.getMonth()-2);
+            var min_start = d.setMonth(d.getMonth()-1);
             // get history data
             chrome.history.search({
                 text: "",
@@ -69,7 +69,22 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                 endTime: max_start,
                 maxResults: 1e6
             }, function(results) {
-                console.log(results);
+                var visits = [];
+                async.each(results, function(result, callback) {
+                    chrome.history.getVisits({
+                        url: result.url
+                    }, function(items) {
+                        Array.prototype.push.apply(visits, items.map(function(item) {
+                            return {
+                                url: result.url,
+                                visitTime: item.visitTime
+                            };
+                        }));
+                        callback();
+                    });
+                }, function(err) {
+                    console.log(visits);
+                });
             });
         }
 
