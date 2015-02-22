@@ -142,10 +142,11 @@ requirejs(['async','node/interval-tree/IntervalTree'],
                     });
 
                 }, function() {
-                    console.log(events);
+
                     var filtered_events = events.filter(function(evt){
-                        evt.
-                    }) //recurrence
+                        return evt.recurrence !== undefined;
+                    });
+                    console.log(filtered_events);
                 });
                 //while (count !=max){console.log(count,max);}
 
