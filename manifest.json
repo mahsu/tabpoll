@@ -5,18 +5,26 @@
   "version": "0.1",
   // Recommended
   "description": "A plain text description",
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   //"icons": {},
 
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "key": "aphibfmodondpnkpfclpjfhhdheldenn",
-  "permissions": ["tabs", "history", "storage", "geolocation", "identity",
+  //"key": "aphibfmodondpnkpfclpjfhhdheldenn",
+  "permissions": [
+    "tabs",
+    "history",
+    "storage",
+    "geolocation",
+    "identity",
     "https://accounts.google.com/*",
     "https://www.googleapis.com/*"],
 
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "js/jquery-2.1.3.min.js",
+      "js/background.js"],
     "persistent": true
   },
 
