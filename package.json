@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "interval-tree": "0.0.4",
+    "sortedlist": ">=0.1.0"
+  }
+}
