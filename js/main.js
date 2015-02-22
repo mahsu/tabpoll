@@ -1,5 +1,6 @@
 $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
+        console.log(response);
         for (var i=0; i<response.length; i++) {
             var color = hashColor(response[i].commonEvents);
             var html = '<li class="link-item">'+
