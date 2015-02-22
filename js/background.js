@@ -160,13 +160,14 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         //if recurring events not expanded
                         //return evt.recurrence !== undefined;
                     });
+                    console.log("filtered all events")
                     console.log(filtered_events);
                     async.eachSeries(filtered_events, function(evt, callback) {
                         //console.log(evt.start.dateTime);
                         var start = Date.parse(evt.start.dateTime || evt.start.date);
                         var end = Date.parse(evt.end.dateTime || evt.end.date);
                         if (start < end) {
-                            console.log([start, end, evt.summary]);
+                            //console.log([start, end, evt.summary]);
                             itree.add([start / 10000, end / 10000, evt.summary]);
                         }
                         callback();

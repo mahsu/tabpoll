@@ -1,16 +1,14 @@
 {
-  // Required
   "manifest_version": 2,
   "name": "Tadpole",
   "version": "0.1",
-  // Recommended
-  "description": "A plain text description",
+  "description": "",
   "content_security_policy": "script-src 'self'; object-src 'self'",
   "icons": {
     "16": "ico/icon16.png",
     "48": "ico/icon48.png",
-    "128": "ico/icon128.png" },
-
+    "128": "ico/icon128.png"
+  },
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
@@ -23,13 +21,14 @@
     "identity",
     "https://accounts.google.com/*",
     "https://www.googleapis.com/*",
-    "chrome://favicon/*"],
-
+    "chrome://favicon/*"
+  ],
   "background": {
     "scripts": [
       "js/jquery-2.1.3.min.js",
       "js/require.min.js",
-      "js/background.js"],
+      "js/background.js"
+    ],
     "persistent": true
   },
 
