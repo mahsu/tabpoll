@@ -6,8 +6,8 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['node/interval-tree/IntervalTree'],
-    function   (intervalTree) {
+requirejs(['async','node/interval-tree/IntervalTree'],
+    function   (async, intervalTree) {
         //jQuery, canvas and the app/sub module are all
         //loaded and can be used here now.
         var current_token;
@@ -109,12 +109,15 @@ requirejs(['node/interval-tree/IntervalTree'],
             max_start = new Date(max_start).toISOString();
             var min_start = d.setMonth(d.getMonth()-2);
             min_start = new Date(min_start).toISOString();
+            console.log(min_start, max_start);
 
             get_cal_list(function (calendar_list, err) {
                 if (err) console.log(err);
                 calendars = calendars || calendar_list;
                 console.log(calendars);
-                calendars.items.forEach(function(cal) {
+                var max = calendars.items.length;
+                var count = 1;
+                async.eachSeries(calendars.items, function(cal, callback) {
                     var cal_id = cal.id;
                     $.ajax({
                         method: 'GET',
@@ -123,18 +126,26 @@ requirejs(['node/interval-tree/IntervalTree'],
                             "alt": "json",
                             "access_token": current_token,
                             "max_results": 2500,
-                            "startTime": min_start,
-                            "endTime": max_start,
+                            "timeMin": min_start,
+                            "timeMax": max_start,
                             "singleEvents": false
                         },
                         success: function(cal_list) {
-                            console.log(cal_list);
-                            events.concat(cal_list);
-
+                            //console.log(cal_list);
+                            events = events.concat(cal_list.items);
+                        },
+                        complete: function(){
+                          count++;
+                            callback();
                         }
-                    })
 
+                    });
+
+                }, function() {
+                    console.log(events);
                 });
+                //while (count !=max){console.log(count,max);}
+
             });
 
 
