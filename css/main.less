@@ -11,6 +11,12 @@ html, body {
   top: 0px;
   height: 100%;
   overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 body {
@@ -89,11 +95,9 @@ body {
 }
 
 #time, #time_hidden {
-  opacity: 0;
   height: 150px;
   z-index: 2;
-  width: 90%;
-  max-width: 600px;
+  width: 360px;
   margin: auto;
   text-align: center;
   margin-top: 50px;
@@ -105,11 +109,15 @@ body {
     font-size: 80px;
     color: #333;
   }
+}
+
+#topbar {
+  opacity: 0;
   .date {
     position: absolute;
     display: inline-block;
     top: 90px;
-    margin-left: 15px;
+    margin-left: 370px;
     line-height: 25px;
     text-align: left;
   }
@@ -119,8 +127,13 @@ body {
     top: 90px;
     line-height: 25px;
     text-align: right;
-    margin-left: -80px;
     opacity: 0;
+    margin-right: 5px;
+    div {
+      position: relative;
+      left: -100%;
+      padding-right: 5px;
+    }
   }
   #weather-icon {
     height: 47px;
@@ -129,9 +142,15 @@ body {
     opacity: 0.8;
   }
   .name {
-    margin-top: -23px;
+    text-align: center;
+    margin-top: -8px;
     font-size: 24px;
   }
+}
+
+#time-wrapper {
+  width: 360px;
+  margin: auto;
 }
 
 #time_hidden {
@@ -143,10 +162,9 @@ body {
 }
 
 #divider {
-  top: 30px;
+  top: 0px;
   position: relative;
   width: 0%;
-  opacity: 0;
   max-width: 800px;
 }
 
@@ -155,7 +173,7 @@ body {
   width: 90%;
   max-width: 600px;
   margin-bottom: 150px;
-  margin-top: 50px;
+  margin-top: 0px;
   ul {
     list-style-type: none;
     padding: 0;
@@ -199,6 +217,7 @@ body {
       .title {
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-bottom: -10px;
       }
       .link {
         font-size: 12px;
@@ -206,6 +225,23 @@ body {
         overflow: hidden;
         margin-top: -8px;
         text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 40%;
+      }
+      .event {
+        font-size: 12px;
+        color: #888;
+        display: inline-block;
+        float: right;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 40%;
+      }
+      .colorBar {
+        float: right;
+        width: 5px;
+        height: 100%;
+        margin-right: -10px;
       }
     }
   }
