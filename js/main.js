@@ -1,16 +1,28 @@
 $(window).load(function () {
-    chrome.runtime.sendMessage({action: "getLinks"}, function(response) {
-        renderLinks(response);
-    });
     var clock = new Clock();
     setInterval(function () {
         clock.update();
+        if (lastRendered != null && Math.abs(lastRendered - Date.now()) > 60 * 1000) {
+            lastRendered = null;
+            updateLinks(true);
+        }
+        lastRendered = Date.now();
     }, 1000);
     getWeather();
+    updateLinks(false);
 });
 
+function updateLinks(refresh) {
+    chrome.runtime.sendMessage({action: "getLinks", refresh: refresh}, function(response) {
+        renderLinks(response);
+    });
+}
+
+var lastRendered;
 function renderLinks(response) {
+    lastRendered = Date.now();
     console.log(response);
+    $("#suggestions ul").html("");
     for (var i=0; i<response.length; i++) {
         var colors = [];
         var events = response[i].commonEvents;
