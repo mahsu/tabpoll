@@ -1,0 +1,25 @@
+@font-face{font-family:existence;src:url(font/Existence-Light.otf)}html,body{position:absolute;margin:0;width:100%;top:0;height:100%;overflow:hidden}
+body{font-family:'Khula',sans-serif;font-size:20px;color:#555}
+#bg-frame{opacity:0;position:absolute;top:0;width:100%;height:100%}
+#scroll-wrapper{height:100%;position:absolute;top:0;overflow:scroll;width:100%}
+.gradient{position:absolute;width:100%;pointer-events:none;z-index:1}
+#top-gradient{top:0;height:150px}
+.top-gradient{background:-moz-linear-gradient(top, #fff 0, rgba(255,255,255,0) 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(100%, rgba(255,255,255,0)));background:-webkit-linear-gradient(top, #fff 0, rgba(255,255,255,0) 100%);background:-o-linear-gradient(top, #fff 0, rgba(255,255,255,0) 100%);background:-ms-linear-gradient(top, #fff 0, rgba(255,255,255,0) 100%);background:linear-gradient(to bottom, #fff 0, rgba(255,255,255,0) 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#00ffffff', GradientType=0);}
+#bottom-gradient{bottom:0;height:200px}
+.bottom-gradient{background:-moz-linear-gradient(top, rgba(255,255,255,0) 0, rgba(255,255,255,0) 20%, #fff 92%, #fff 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255,255,255,0)), color-stop(20%, rgba(255,255,255,0)), color-stop(92%, #fff), color-stop(100%, #fff));background:-webkit-linear-gradient(top, rgba(255,255,255,0) 0, rgba(255,255,255,0) 20%, #fff 92%, #fff 100%);background:-o-linear-gradient(top, rgba(255,255,255,0) 0, rgba(255,255,255,0) 20%, #fff 92%, #fff 100%);background:-ms-linear-gradient(top, rgba(255,255,255,0) 0, rgba(255,255,255,0) 20%, #fff 92%, #fff 100%);background:linear-gradient(to bottom, rgba(255,255,255,0) 0, rgba(255,255,255,0) 20%, #fff 92%, #fff 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#ffffff', GradientType=0);}
+#top-clock-gradient{position:absolute;top:50px;height:25px;width:100%}
+#bottom-clock-gradient{position:absolute;top:130px;height:30px;width:100%}
+#time,#time_hidden{height:150px;z-index:2;width:90%;max-width:600px;margin:auto;text-align:center;margin-top:50px;overflow:hidden}#time .number,#time_hidden .number{position:relative;display:inline-block;width:40px;font-size:80px;color:#333}
+#time .date,#time_hidden .date{position:absolute;display:inline-block;top:90px;margin-left:15px;line-height:25px;text-align:left}
+#time .name,#time_hidden .name{margin-top:-23px;font-size:24px}
+#time_hidden{margin-top:-140px;height:100px}#time_hidden .number{padding-top:80px}
+#divider{top:30px;position:relative;width:80%;max-width:800px}
+#suggestions{margin:auto;width:90%;max-width:600px;margin-bottom:150px;margin-top:50px}#suggestions ul{list-style-type:none;padding:0;margin:0}#suggestions ul li{padding:5px;white-space:nowrap}
+#suggestions .link-item{position:relative;opacity:0;height:60px;top:30px;padding:0;transition:top .5s ease,opacity .5s ease,padding .3s ease}#suggestions .link-item.in{height:50px;opacity:1;top:0}
+#suggestions .link-item.scrolling{padding:5px 0}
+#suggestions .link-item a{width:100%;text-decoration:none;color:#555}#suggestions .link-item a i{float:left}#suggestions .link-item a i img{position:relative;top:3px;height:20px;margin-right:7px}
+#suggestions .link-item a .contain{overflow:hidden}
+#suggestions .link-item a .title{overflow:hidden;text-overflow:ellipsis}
+#suggestions .link-item a .link{font-size:12px;color:#888;overflow:hidden;margin-top:-8px;text-overflow:ellipsis}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:#555}
