@@ -1,0 +1,31 @@
+{
+  // Required
+  "manifest_version": 2,
+  "name": "Tadpole",
+  "version": "0.1",
+  // Recommended
+  "description": "A plain text description",
+  //"icons": {},
+
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "key": "aphibfmodondpnkpfclpjfhhdheldenn",
+  "permissions": ["tabs", "history", "storage", "geolocation", "identity",
+    "https://accounts.google.com/*",
+    "https://www.googleapis.com/*"],
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+
+  "oauth2": {
+    "client_id":"1045571478564-39o43fllhkid25mhsu2fvbb16j7ts2p3.apps.googleusercontent.com",
+    "scopes": [
+      "https://mail.google.com/",
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ]
+  }
+}
