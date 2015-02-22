@@ -1,13 +1,24 @@
 $(window).load(function () {
-    var items = $('.link-item');
-    for (var i = 0; i < items.length; i++) {
-        $(items[i]).delay(30 * i).queue(function (next) {
-            $(this).addClass("in");
-            next();
-        });
-    }
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
-        console.log(response);
+        for (var i=0; i<response.length; i++) {
+            var html = '<li class="link-item">'+
+            '<a href="' + response[i][0] + '">'+
+            '<i><img src="http://96wefm.com/sites/all/themes/WEFM/images/fb-button.png" /></i>'+
+            '<div class="contain">'+
+            '<div class="title">' + response[i][0] + '</div>'+
+            '<div class="link">' + response[i][0] + '</div>'+
+            '</div>'+
+            '</a>'+
+            '</li>';
+            $(html).appendTo("#suggestions ul");
+        }
+        var items = $('.link-item');
+        for (var i = 0; i < items.length; i++) {
+            $(items[i]).delay(30 * i).queue(function (next) {
+                $(this).addClass("in");
+                next();
+            });
+        }
     });
 });
 
