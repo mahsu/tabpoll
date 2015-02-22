@@ -4,7 +4,6 @@ $(window).load(function () {
         for (var i=0; i<response.length; i++) {
             var colors = [];
             var events = response[i].commonEvents;
-            console.log(events);
             for (var j = 0; j < events.length; j++) {
               colors.push(hashColor(events[j]));
             }
