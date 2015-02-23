@@ -1,18 +1,28 @@
 $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks"}, function(response) {
-        console.log(response);
-        for (var i=0; i<response.length; i++) {
-            var colors = [];
-            var events = response[i].commonEvents;
-            for (var j = 0; j < events.length; j++) {
-              colors.push(hashColor(events[j]));
-            }
-            colorBars = "";
-            for (var k = 0; k < colors.length; k++) {
-              colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
-            }
+        renderLinks(response);
+    });
+    var clock = new Clock();
+    setInterval(function () {
+        clock.update();
+    }, 1000);
+    getWeather();
+});
 
-            var html = '<li class="link-item">'+
+function renderLinks(response) {
+    console.log(response);
+    for (var i=0; i<response.length; i++) {
+        var colors = [];
+        var events = response[i].commonEvents;
+        for (var j = 0; j < events.length; j++) {
+            colors.push(hashColor(events[j]));
+        }
+        colorBars = "";
+        for (var k = 0; k < colors.length; k++) {
+            colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
+        }
+
+        var html = '<li class="link-item">'+
             '<a href="http://' + response[i].host + '">'+
             '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
             '<div class="color-wrapper">'+
@@ -25,23 +35,16 @@ $(window).load(function () {
             '</div>'+
             '</a>'+
             '</li>';
-            $(html).appendTo("#suggestions ul");
-        }
-        var items = $('.link-item');
-        for (var i = 0; i < items.length; i++) {
-            $(items[i]).delay(30 * i).queue(function (next) {
-                $(this).addClass("in");
-                next();
-            });
-        }
-    });
-    var clock = new Clock();
-    setInterval(function () {
-        clock.update();
-    }, 1000);
-    getWeather();
-});
-
+        $(html).appendTo("#suggestions ul");
+    }
+    var items = $('.link-item');
+    for (var i = 0; i < items.length; i++) {
+        $(items[i]).delay(30 * i).queue(function (next) {
+            $(this).addClass("in");
+            next();
+        });
+    }
+}
 
 var lastOffset = $("scroll-wrapper").scrollTop();
 var lastDate = new Date().getTime();
