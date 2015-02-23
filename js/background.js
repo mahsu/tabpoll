@@ -247,8 +247,9 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         });
                     });
                     current.forEach(function(event) {
-                        if (allEvents[event.data[2]]) {
-                            commonEvents.push(event.data[2]);
+                        var eventName = event.data[2];
+                        if (allEvents[eventName] && !(eventName in commonEvents)) {
+                            commonEvents.push(eventName);
                         }
                     });
                     return commonEvents;
