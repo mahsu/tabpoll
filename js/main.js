@@ -116,34 +116,29 @@ $(document).ready(function () {
 });
 
 function getWeather() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      $.ajax({
-        url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
-        success: function(data) {
-          var location = data.name;
-          var temp = parseInt(data.main.temp) + " F";
-          var desc = data.weather[0].description;
-          var img;
-          $('#location').text(location);
-          $('#temp').text(temp);
-          if (desc.indexOf("cloudy") > -1) {
+    chrome.runtime.sendMessage({action: "getWeather"}, function(data) {
+        if (data == null) return;
+
+        var location = data.name;
+        var temp = parseInt(data.main.temp) + " F";
+        var desc = data.weather[0].description;
+        var img;
+        $('#location').text(location);
+        $('#temp').text(temp);
+        if (desc.indexOf("cloudy") > -1) {
             img = "icons/Cloud.svg"
-          } else if (desc.indexOf("sunny") > -1) {
+        } else if (desc.indexOf("sunny") > -1) {
             img = "icons/Sun.svg"
-          } else if (desc.indexOf("partly")  > -1 || desc.indexOf("mostly")  > -1) {
+        } else if (desc.indexOf("partly") > -1 || desc.indexOf("mostly") > -1) {
             img = "icons/Cloud-Sun.svg"
-          } else {
+        } else {
             img = "icons/Sun.svg"
-          }
-          $('#weather-icon').attr('src', img);
-          $('.weather').animate({
-            opacity: 1
-          }, 300);
         }
-      });
+        $('#weather-icon').attr('src', img);
+        $('.weather').animate({
+            opacity: 1
+        }, 300);
     });
-  }
 }
 
 function Clock() {
