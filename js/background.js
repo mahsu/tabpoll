@@ -246,7 +246,6 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                             allEvents[event.data[2]] = true;
                         });
                     });
-                    console.log(Object.keys(allEvents).length, allEvents);
                     current.forEach(function(event) {
                         if (allEvents[event.data[2]]) {
                             commonEvents.push(event.data[2]);
@@ -268,7 +267,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                             }
 
                             var options = {
-                                k: 50,
+                                k: 5,
                                 weights: {
                                     dayOfWeek: 2,
                                     minutesPastMidnight: 1,
@@ -286,8 +285,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                                 return itree.search(visit.visitTime / 10000); // convert to 10 second resolution
                             }));
                             if (commonEvents.length > 0) {
-                                console.log("found", commonEvents, host);
-                                score -= 1;
+                                score -= 1.5;
                             }
                             results.push({
                                 host: host,
