@@ -192,6 +192,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     var date = new Date(item.visitTime);
                     var obj = dateToObj(date);
                     obj.url = item.url;
+                    obj.visitTime = item.visitTime;
                     var host = getHost(item.url);
                     if (!sites.hasOwnProperty(host)) {
                         sites[host] = [];
@@ -236,10 +237,28 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     return dist;
                 };
 
+                function compareEvents(current, pastArray) {
+                    var allEvents = {};
+                    var commonEvents = [];
+                    pastArray.forEach(function(past) {
+                        past.forEach(function(event) {
+                            allEvents[event.data] = true;
+                        });
+                    });
+                    console.log(allEvents);
+                    current.forEach(function(event) {
+                        if (allEvents[event.data]) {
+                            commonEvents.push(event.data);
+                        }
+                    });
+                    return commonEvents;
+                }
+
                 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     console.log("init()", "Incoming message", request, sender);
                     if (request.action == "getLinks") {
                         var testObj = dateToObj(new Date(request.date));
+                        var currentEvents = itree.search(request.date / 10); // convert to 10 second resolution
                         var results = [];
                         for (var host in sites) {
                             // Limit only to sites with at least 10 visits
@@ -258,14 +277,25 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
 
                             var knnResults = alike(testObj, sites[host], options);
 
-                            var totalDistance = 0;
+                            var score = 0;
                             for (var i=0; i<knnResults.length; i++) {
-                                totalDistance += distance(testObj, knnResults[i]);
+                                score += distance(testObj, knnResults[i]);
                             }
-                            results.push([host, totalDistance]);
+                            var commonEvents = compareEvents(currentEvents, sites[host].map(function(visit) {
+                                return itree.search(visit.visitTime / 10); // convert to 10 second resolution
+                            }));
+                            if (commonEvents.length > 0) {
+                                console.log("found", commonEvents, host);
+                                score -= 1;
+                            }
+                            results.push({
+                                host: host,
+                                score: score,
+                                commonEvents: commonEvents
+                            });
                         }
                         results.sort(function(a, b) {
-                            return a[1] - b[1];
+                            return a.score - b.score;
                         });
                         sendResponse(results);
                     }

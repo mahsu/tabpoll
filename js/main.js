@@ -2,11 +2,11 @@ $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
         for (var i=0; i<response.length; i++) {
             var html = '<li class="link-item">'+
-            '<a href="http://' + response[i][0] + '">'+
-            '<i><img src="chrome://favicon/http://' + response[i][0] + '" /></i>'+
+            '<a href="http://' + response[i].host + '">'+
+            '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
             '<div class="contain">'+
-            '<div class="title">' + response[i][0] + '</div>'+
-            '<div class="link">' + response[i][0] + '</div>'+
+            '<div class="title">' + response[i].host + response[i].commonEvents + '</div>'+
+            '<div class="link">' + response[i].host + '</div>'+
             '</div>'+
             '</a>'+
             '</li>';
