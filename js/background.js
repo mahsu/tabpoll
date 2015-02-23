@@ -243,13 +243,13 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     var commonEvents = [];
                     pastArray.forEach(function(past) {
                         past.forEach(function(event) {
-                            allEvents[event.data] = true;
+                            allEvents[event.data[2]] = true;
                         });
                     });
-                    console.log(allEvents);
+                    console.log(Object.keys(allEvents).length, allEvents);
                     current.forEach(function(event) {
-                        if (allEvents[event.data]) {
-                            commonEvents.push(event.data);
+                        if (allEvents[event.data[2]]) {
+                            commonEvents.push(event.data[2]);
                         }
                     });
                     return commonEvents;
@@ -259,16 +259,16 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     console.log("init()", "Incoming message", request, sender);
                     if (request.action == "getLinks") {
                         var testObj = dateToObj(new Date(request.date));
-                        var currentEvents = itree.search(request.date / 10); // convert to 10 second resolution
+                        var currentEvents = itree.search(request.date / 10000); // convert to 10 second resolution
                         var results = [];
                         for (var host in sites) {
-                            // Limit only to sites with at least 10 visits
+                            // Limit only to sites with at least 20 visits
                             if (sites[host].length < 20) {
                                 continue;
                             }
 
                             var options = {
-                                k: 5,
+                                k: 50,
                                 weights: {
                                     dayOfWeek: 2,
                                     minutesPastMidnight: 1,
@@ -282,8 +282,8 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                             for (var i=0; i<knnResults.length; i++) {
                                 score += distance(testObj, knnResults[i]);
                             }
-                            var commonEvents = compareEvents(currentEvents, sites[host].map(function(visit) {
-                                return itree.search(visit.visitTime / 10); // convert to 10 second resolution
+                            var commonEvents = compareEvents(currentEvents, knnResults.map(function(visit) {
+                                return itree.search(visit.visitTime / 10000); // convert to 10 second resolution
                             }));
                             if (commonEvents.length > 0) {
                                 console.log("found", commonEvents, host);
