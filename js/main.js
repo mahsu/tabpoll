@@ -2,15 +2,27 @@ $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
         console.log(response);
         for (var i=0; i<response.length; i++) {
-            var color = hashColor(response[i].commonEvents);
+            var colors = [];
+            var events = response[i].commonEvents;
+            console.log(events);
+            for (var j = 0; j < events.length; j++) {
+              colors.push(hashColor(events[j]));
+            }
+            colorBars = "";
+            for (var k = 0; k < colors.length; k++) {
+              colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
+            }
+
             var html = '<li class="link-item">'+
             '<a href="http://' + response[i].host + '">'+
             '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
-            '<div class="colorBar" style="background-color: rgb(' + color.r + ',' + color.g + ',' + color.b + ')"></div>' +
+            '<div class="color-wrapper">'+
+            colorBars +
+            '</div>' +
             '<div class="contain">'+
-            '<div class="title">' + response[i].host + response[i].commonEvents + '</div>'+
+            '<div class="title">' + response[i].host + '</div>'+
             '<div class="link">' + response[i].host + '</div>'+
-            '<div class="event">' + response[i].commonEvents + '</div>'+
+            '<div class="event">' + response[i].commonEvents.join(', ') + '</div>'+
             '</div>'+
             '</a>'+
             '</li>';
@@ -267,15 +279,23 @@ Number.prototype.map = function ( in_min , in_max , out_min , out_max ) {
 }
 
 function hashColor(str){
-    var hash = 0;
-    if (str.length == 0) return hash;
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash;
+    if (str) {
+      var hash = 0;
+      if (str.length == 0) return hash;
+      for (i = 0; i < str.length; i++) {
+          char = str.charCodeAt(i);
+          hash = ((hash<<5)-hash)+char;
+          hash = hash & hash;
+      }
+      var hue = (Math.abs(hash) % 360)/360;
+      return HSVtoRGB(hue, 1, 0.7);
+    } else {
+      return {
+        r: 255,
+        g: 255,
+        b: 255
+      }
     }
-    var hue = (Math.abs(hash) % 360)/360;
-    return HSVtoRGB(hue, 1, 0.7);
 }
 
 function HSVtoRGB(h, s, v) {
