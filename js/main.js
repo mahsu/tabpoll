@@ -2,12 +2,15 @@ $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
         console.log(response);
         for (var i=0; i<response.length; i++) {
+            var color = hashColor(response[i].commonEvents);
             var html = '<li class="link-item">'+
             '<a href="http://' + response[i].host + '">'+
             '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
+            '<div class="colorBar" style="background-color: rgb(' + color.r + ',' + color.g + ',' + color.b + ')"></div>' +
             '<div class="contain">'+
             '<div class="title">' + response[i].host + response[i].commonEvents + '</div>'+
             '<div class="link">' + response[i].host + '</div>'+
+            '<div class="event">' + response[i].commonEvents + '</div>'+
             '</div>'+
             '</a>'+
             '</li>';
@@ -21,6 +24,11 @@ $(window).load(function () {
             });
         }
     });
+    var clock = new Clock();
+    setInterval(function () {
+        clock.update();
+    }, 1000);
+    getWeather();
 });
 
 
@@ -93,21 +101,18 @@ function getTime() {
 }
 
 $(document).ready(function () {
-    var clock = new Clock();
-    setInterval(function () {
-        clock.update();
-    }, 1000);
-    getWeather();
-    $('#time').animate({
+    /*$('#time').animate({
       opacity: 1
     }, 500);
     $('#time_hidden').animate({
       opacity: 1
-    }, 500);
-    $('#divider').animate({
-      width: "80%",
+    }, 500);*/
+    $('#topbar').animate({
       opacity: 1
-    }, 500);
+    }, 800);
+    $('#divider').animate({
+      width: "80%"
+    }, 800);
 });
 
 function getWeather() {
@@ -135,7 +140,6 @@ function getWeather() {
           $('.weather').animate({
             opacity: 1
           }, 300);
-          console.log(data);
         }
       });
     });
@@ -262,3 +266,44 @@ Clock.prototype.update = function () {
         }
     }
 };
+
+Number.prototype.map = function ( in_min , in_max , out_min , out_max ) {
+  return ( this - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
+}
+
+function hashColor(str){
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash;
+    }
+    var hue = (Math.abs(hash) % 360)/360;
+    return HSVtoRGB(hue, 1, 0.7);
+}
+
+function HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (h && s === undefined && v === undefined) {
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.floor(r * 255),
+        g: Math.floor(g * 255),
+        b: Math.floor(b * 255)
+    };
+}
