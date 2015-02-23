@@ -1,5 +1,5 @@
 $(window).load(function () {
-    chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
+    chrome.runtime.sendMessage({action: "getLinks"}, function(response) {
         console.log(response);
         for (var i=0; i<response.length; i++) {
             var colors = [];

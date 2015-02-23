@@ -16,6 +16,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
         var events = [];
         var itree = new intervalTree(Date.now()/10000);
         var weatherData;
+        var linkData;
 
         if (current_token) {
             chrome.identity.removeCachedAuthToken({ token: current_token }, function(){});
@@ -270,49 +271,58 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     return commonEvents;
                 }
 
+                function getLinks() {
+                    var testObj = dateToObj(new Date(Date.now()));
+                    var currentEvents = itree.search(Date.now() / 10000); // convert to 10 second resolution
+                    var results = [];
+                    for (var host in sites) {
+                        // Limit only to sites with at least 20 visits
+                        if (sites[host].length < 20) {
+                            continue;
+                        }
+
+                        var options = {
+                            k: 5,
+                            weights: {
+                                dayOfWeek: 2,
+                                minutesPastMidnight: 1,
+                                minutesPastNoon: 1
+                            }
+                        };
+
+                        var knnResults = alike(testObj, sites[host], options);
+
+                        var score = 0;
+                        for (var i=0; i<knnResults.length; i++) {
+                            score += distance(testObj, knnResults[i]);
+                        }
+                        var commonEvents = compareEvents(currentEvents, knnResults.map(function(visit) {
+                            return itree.search(visit.visitTime / 10000); // convert to 10 second resolution
+                        }));
+                        if (commonEvents.length > 0) {
+                            score -= 1.5;
+                        }
+                        results.push({
+                            host: host,
+                            score: score,
+                            commonEvents: commonEvents
+                        });
+                    }
+                    results.sort(function(a, b) {
+                        return a.score - b.score;
+                    });
+                    linkData = results;
+                }
+
+                setInterval(function() {
+                    getLinks();
+                }, 60 * 1000);
+                getLinks();
+
                 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     console.log("init()", "Incoming message", request, sender);
                     if (request.action == "getLinks") {
-                        var testObj = dateToObj(new Date(request.date));
-                        var currentEvents = itree.search(request.date / 10000); // convert to 10 second resolution
-                        var results = [];
-                        for (var host in sites) {
-                            // Limit only to sites with at least 20 visits
-                            if (sites[host].length < 20) {
-                                continue;
-                            }
-
-                            var options = {
-                                k: 5,
-                                weights: {
-                                    dayOfWeek: 2,
-                                    minutesPastMidnight: 1,
-                                    minutesPastNoon: 1
-                                }
-                            };
-
-                            var knnResults = alike(testObj, sites[host], options);
-
-                            var score = 0;
-                            for (var i=0; i<knnResults.length; i++) {
-                                score += distance(testObj, knnResults[i]);
-                            }
-                            var commonEvents = compareEvents(currentEvents, knnResults.map(function(visit) {
-                                return itree.search(visit.visitTime / 10000); // convert to 10 second resolution
-                            }));
-                            if (commonEvents.length > 0) {
-                                score -= 1.5;
-                            }
-                            results.push({
-                                host: host,
-                                score: score,
-                                commonEvents: commonEvents
-                            });
-                        }
-                        results.sort(function(a, b) {
-                            return a.score - b.score;
-                        });
-                        sendResponse(results);
+                        sendResponse(linkData);
                     } else if (request.action == "getWeather") {
                         sendResponse(weatherData);
                     }
