@@ -186,18 +186,24 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
         function init() {
             console.log("init()", "Initializing");
 
-            // Get weather data
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    $.ajax({
-                        url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
-                        success: function(data) {
-                            console.log("init()", "Got weather data");
-                            weatherData = data;
-                        }
+            function getWeather() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        $.ajax({
+                            url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
+                            success: function (data) {
+                                console.log("init()", "Got weather data");
+                                weatherData = data;
+                            }
+                        });
                     });
-                });
+                }
             }
+
+            setInterval(function () {
+                getWeather();
+            }, 10 * 60 * 1000);
+            getWeather();
 
             get_history(function(err, visits) {
                 console.log("init()", "Got history data");
