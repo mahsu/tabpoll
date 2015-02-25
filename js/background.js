@@ -328,6 +328,9 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     console.log("init()", "Incoming message", request, sender);
                     if (request.action == "getLinks") {
+                        if (request.refresh) {
+                            getLinks();
+                        }
                         sendResponse(linkData);
                     } else if (request.action == "getWeather") {
                         sendResponse(weatherData);
