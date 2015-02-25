@@ -137,8 +137,9 @@ $(document).ready(function () {
       opacity: 1
     }, 800);
     $('#divider').animate({
-      width: "80%"
-    }, 800);
+      width: "80%",
+      opacity: 1
+    }, 500);
 });
 
 function getWeather() {
