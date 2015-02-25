@@ -1,6 +1,6 @@
 @font-face {
-  font-family: existence;
-  src: url(font/Existence-Light.otf);
+  font-family: Khula;
+  src: url(../font/Khula-Light.ttf);
 }
 html,
 body {
@@ -244,10 +244,15 @@ body {
   max-width: 40%;
 }
 #suggestions .link-item a .colorBar {
-  float: right;
-  width: 5px;
+  width: 3px;
   height: 100%;
   margin-right: -10px;
+  display: inline-block;
+  margin-left: 12px;
+}
+#suggestions .link-item a .color-wrapper {
+  float: right;
+  height: 100%;
 }
 ::-webkit-scrollbar {
   width: 3px;

@@ -1,16 +1,27 @@
 $(window).load(function () {
-    chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
+    chrome.runtime.sendMessage({action: "getLinks"}, function(response) {
         console.log(response);
         for (var i=0; i<response.length; i++) {
-            var color = hashColor(response[i].commonEvents);
+            var colors = [];
+            var events = response[i].commonEvents;
+            for (var j = 0; j < events.length; j++) {
+              colors.push(hashColor(events[j]));
+            }
+            colorBars = "";
+            for (var k = 0; k < colors.length; k++) {
+              colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
+            }
+
             var html = '<li class="link-item">'+
             '<a href="http://' + response[i].host + '">'+
             '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
-            '<div class="colorBar" style="background-color: rgb(' + color.r + ',' + color.g + ',' + color.b + ')"></div>' +
+            '<div class="color-wrapper">'+
+            colorBars +
+            '</div>' +
             '<div class="contain">'+
-            '<div class="title">' + response[i].host + response[i].commonEvents + '</div>'+
+            '<div class="title">' + response[i].host + '</div>'+
             '<div class="link">' + response[i].host + '</div>'+
-            '<div class="event">' + response[i].commonEvents + '</div>'+
+            '<div class="event">' + response[i].commonEvents.join(', ') + '</div>'+
             '</div>'+
             '</a>'+
             '</li>';
@@ -116,34 +127,29 @@ $(document).ready(function () {
 });
 
 function getWeather() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      $.ajax({
-        url: "http://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude,
-        success: function(data) {
-          var location = data.name;
-          var temp = parseInt(data.main.temp) + " F";
-          var desc = data.weather[0].description;
-          var img;
-          $('#location').text(location);
-          $('#temp').text(temp);
-          if (desc.indexOf("cloudy") > -1) {
+    chrome.runtime.sendMessage({action: "getWeather"}, function(data) {
+        if (data == null) return;
+
+        var location = data.name;
+        var temp = parseInt(data.main.temp) + " F";
+        var desc = data.weather[0].description;
+        var img;
+        $('#location').text(location);
+        $('#temp').text(temp);
+        if (desc.indexOf("cloudy") > -1) {
             img = "icons/Cloud.svg"
-          } else if (desc.indexOf("sunny") > -1) {
+        } else if (desc.indexOf("sunny") > -1) {
             img = "icons/Sun.svg"
-          } else if (desc.indexOf("partly")  > -1 || desc.indexOf("mostly")  > -1) {
+        } else if (desc.indexOf("partly") > -1 || desc.indexOf("mostly") > -1) {
             img = "icons/Cloud-Sun.svg"
-          } else {
+        } else {
             img = "icons/Sun.svg"
-          }
-          $('#weather-icon').attr('src', img);
-          $('.weather').animate({
-            opacity: 1
-          }, 300);
         }
-      });
+        $('#weather-icon').attr('src', img);
+        $('.weather').animate({
+            opacity: 1
+        }, 300);
     });
-  }
 }
 
 function Clock() {
@@ -272,15 +278,23 @@ Number.prototype.map = function ( in_min , in_max , out_min , out_max ) {
 }
 
 function hashColor(str){
-    var hash = 0;
-    if (str.length == 0) return hash;
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash;
+    if (str) {
+      var hash = 0;
+      if (str.length == 0) return hash;
+      for (i = 0; i < str.length; i++) {
+          char = str.charCodeAt(i);
+          hash = ((hash<<5)-hash)+char;
+          hash = hash & hash;
+      }
+      var hue = (Math.abs(hash) % 360)/360;
+      return HSVtoRGB(hue, 1, 0.7);
+    } else {
+      return {
+        r: 255,
+        g: 255,
+        b: 255
+      }
     }
-    var hue = (Math.abs(hash) % 360)/360;
-    return HSVtoRGB(hue, 1, 0.7);
 }
 
 function HSVtoRGB(h, s, v) {
