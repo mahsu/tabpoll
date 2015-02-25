@@ -282,8 +282,8 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     var currentEvents = itree.search(Date.now() / 10000); // convert to 10 second resolution
                     var results = [];
                     for (var host in sites) {
-                        // Limit only to sites with at least 20 visits
-                        if (sites[host].length < 20) {
+                        // Limit only to sites with at least 20 visits, and skip blank
+                        if (sites[host].length < 20 || host == '') {
                             continue;
                         }
 
@@ -317,6 +317,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     results.sort(function(a, b) {
                         return a.score - b.score;
                     });
+                    results = results.slice(0, 20);
                     linkData = results;
                 }
 
