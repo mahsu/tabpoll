@@ -1,47 +1,64 @@
 $(window).load(function () {
-    chrome.runtime.sendMessage({action: "getLinks"}, function(response) {
-        console.log(response);
-        for (var i=0; i<response.length; i++) {
-            var colors = [];
-            var events = response[i].commonEvents;
-            for (var j = 0; j < events.length; j++) {
-              colors.push(hashColor(events[j]));
-            }
-            colorBars = "";
-            for (var k = 0; k < colors.length; k++) {
-              colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
-            }
+    var clock = new Clock();
+    setInterval(function () {
+        clock.update();
+        if (lastRendered != null && Math.abs(lastRendered - Date.now()) > 60 * 1000) {
+            lastRendered = null;
+            updateLinks(true);
+        }
+        lastRendered = Date.now();
+    }, 1000);
+    getWeather();
+    updateLinks(false);
+});
 
-            var html = '<li class="link-item">'+
+function updateLinks(refresh) {
+    chrome.runtime.sendMessage({action: "getLinks", refresh: refresh}, function(response) {
+        renderLinks(response);
+    });
+}
+
+var lastRendered;
+function renderLinks(response) {
+    lastRendered = Date.now();
+    console.log(response);
+    $("#suggestions ul").html("");
+    for (var i=0; i<response.length; i++) {
+        var colors = [];
+        var events = response[i].commonEvents;
+        for (var j = 0; j < events.length; j++) {
+            colors.push(hashColor(events[j]));
+        }
+        colorBars = "";
+        for (var k = 0; k < colors.length; k++) {
+            colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
+        }
+
+        var title = response[i].title != '' ? response[i].title : response[i].host;
+
+        var html = '<li class="link-item">'+
             '<a href="http://' + response[i].host + '">'+
             '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
             '<div class="color-wrapper">'+
             colorBars +
             '</div>' +
             '<div class="contain">'+
-            '<div class="title">' + response[i].host + '</div>'+
+            '<div class="title">' + title + '</div>'+
             '<div class="link">' + response[i].host + '</div>'+
             '<div class="event">' + response[i].commonEvents.join(', ') + '</div>'+
             '</div>'+
             '</a>'+
             '</li>';
-            $(html).appendTo("#suggestions ul");
-        }
-        var items = $('.link-item');
-        for (var i = 0; i < items.length; i++) {
-            $(items[i]).delay(30 * i).queue(function (next) {
-                $(this).addClass("in");
-                next();
-            });
-        }
-    });
-    var clock = new Clock();
-    setInterval(function () {
-        clock.update();
-    }, 1000);
-    getWeather();
-});
-
+        $(html).appendTo("#suggestions ul");
+    }
+    var items = $('.link-item');
+    for (var i = 0; i < items.length; i++) {
+        $(items[i]).delay(30 * i).queue(function (next) {
+            $(this).addClass("in");
+            next();
+        });
+    }
+}
 
 var lastOffset = $("scroll-wrapper").scrollTop();
 var lastDate = new Date().getTime();
@@ -108,78 +125,11 @@ function getTime() {
     if (s.length < 2) {
         s = "0" + s;
     }
-    return [h[0], h[1], m[0], m[1], s[0], s[1]];
-}
+    arr = [h[0], h[1], m[0], m[1], s[0], s[1]];
 
-$(document).ready(function () {
-    /*$('#time').animate({
-      opacity: 1
-    }, 500);
-    $('#time_hidden').animate({
-      opacity: 1
-    }, 500);*/
-    $('#topbar').animate({
-      opacity: 1
-    }, 800);
-    $('#divider').animate({
-      width: "80%"
-    }, 800);
-});
-
-function getWeather() {
-    chrome.runtime.sendMessage({action: "getWeather"}, function(data) {
-        if (data == null) return;
-
-        var location = data.name;
-        var temp = parseInt(data.main.temp) + " F";
-        var desc = data.weather[0].description;
-        var img;
-        $('#location').text(location);
-        $('#temp').text(temp);
-        if (desc.indexOf("cloudy") > -1) {
-            img = "icons/Cloud.svg"
-        } else if (desc.indexOf("sunny") > -1) {
-            img = "icons/Sun.svg"
-        } else if (desc.indexOf("partly") > -1 || desc.indexOf("mostly") > -1) {
-            img = "icons/Cloud-Sun.svg"
-        } else {
-            img = "icons/Sun.svg"
-        }
-        $('#weather-icon').attr('src', img);
-        $('.weather').animate({
-            opacity: 1
-        }, 300);
-    });
-}
-
-function Clock() {
-    var time = getTime();
-    this.h1 = [time[0], time[0]];
-    this.h2 = [time[1], time[1]];
-    this.m1 = [time[2], time[2]];
-    this.m2 = [time[3], time[3]];
-    this.s1 = [time[4], time[4]];
-    this.s2 = [time[5], time[5]];
-    this.times = [this.h1, this.h2, this.m1, this.m2, this.s1, this.s2];
-    this.numbers = [$('#h1'), $('#h2'), $('#m1'), $('#m2'), $('#s1'), $('#s2')];
-    this.numbers_hidden = [$('#h1_hidden'), $('#h2_hidden'), $('#m1_hidden'), $('#m2_hidden'), $('#s1_hidden'), $('#s2_hidden')];
-    $('#h1').text(this.h1[0]);
-    $('#h2').text(this.h2[0]);
-    $('#m1').text(this.m1[0]);
-    $('#m2').text(this.m2[0]);
-    $('#s1').text(this.s1[0]);
-    $('#s2').text(this.s2[0]);
-    $('#h1_hidden').text(this.h1[1]);
-    $('#h2_hidden').text(this.h2[1]);
-    $('#m1_hidden').text(this.m1[1]);
-    $('#m2_hidden').text(this.m2[1]);
-    $('#s1_hidden').text(this.s1[1]);
-    $('#s2_hidden').text(this.s2[1]);
-
-    var today = new Date();
     var day_of_week = today.getDay();
     var day = today.getDate();
-    var month = "Jan"; //today.getMonth();
+    var month = today.getMonth();
     if (day_of_week == 0) {
         day_of_week = "Sunday";
     } else if (day_of_week == 1) {
@@ -231,6 +181,73 @@ function Clock() {
         greeting = "Good afternoon"
     }
     $("#greeting").text(greeting);
+
+    return arr;
+}
+
+$(document).ready(function () {
+    $('#topbar').animate({
+      opacity: 1
+    }, 800);
+    $('#suggestions').animate({
+      opacity: 1,
+      top: 0
+    }, 400);
+    $('#divider').animate({
+      width: "80%",
+      opacity: 1
+    }, 500);
+});
+
+function getWeather() {
+    chrome.runtime.sendMessage({action: "getWeather"}, function(data) {
+        if (data == null) return;
+
+        var location = data.name;
+        var temp = parseInt(data.main.temp) + " F";
+        var desc = data.weather[0].description;
+        var img;
+        $('#location').text(location);
+        $('#temp').text(temp);
+        if (desc.indexOf("cloudy") > -1) {
+            img = "icons/Cloud.svg"
+        } else if (desc.indexOf("sunny") > -1) {
+            img = "icons/Sun.svg"
+        } else if (desc.indexOf("partly") > -1 || desc.indexOf("mostly") > -1) {
+            img = "icons/Cloud-Sun.svg"
+        } else {
+            img = "icons/Sun.svg"
+        }
+        $('#weather-icon').attr('src', img);
+        $('.weather').animate({
+            opacity: 1
+        }, 300);
+    });
+}
+
+function Clock() {
+    var time = getTime();
+    this.h1 = [time[0], time[0]];
+    this.h2 = [time[1], time[1]];
+    this.m1 = [time[2], time[2]];
+    this.m2 = [time[3], time[3]];
+    this.s1 = [time[4], time[4]];
+    this.s2 = [time[5], time[5]];
+    this.times = [this.h1, this.h2, this.m1, this.m2, this.s1, this.s2];
+    this.numbers = [$('#h1'), $('#h2'), $('#m1'), $('#m2'), $('#s1'), $('#s2')];
+    this.numbers_hidden = [$('#h1_hidden'), $('#h2_hidden'), $('#m1_hidden'), $('#m2_hidden'), $('#s1_hidden'), $('#s2_hidden')];
+    $('#h1').text(this.h1[0]);
+    $('#h2').text(this.h2[0]);
+    $('#m1').text(this.m1[0]);
+    $('#m2').text(this.m2[0]);
+    $('#s1').text(this.s1[0]);
+    $('#s2').text(this.s2[0]);
+    $('#h1_hidden').text(this.h1[1]);
+    $('#h2_hidden').text(this.h2[1]);
+    $('#m1_hidden').text(this.m1[1]);
+    $('#m2_hidden').text(this.m2[1]);
+    $('#s1_hidden').text(this.s1[1]);
+    $('#s2_hidden').text(this.s2[1]);
 }
 
 Clock.prototype.update = function () {
