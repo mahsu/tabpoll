@@ -21,7 +21,9 @@
     "identity",
     "https://accounts.google.com/*",
     "https://www.googleapis.com/*",
-    "chrome://favicon/*"
+    "chrome://favicon/*",
+    "http://*/",
+    "https://*/"
   ],
   "background": {
     "scripts": [

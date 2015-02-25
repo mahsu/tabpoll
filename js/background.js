@@ -277,7 +277,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     return commonEvents;
                 }
 
-                function getLinks() {
+                function getLinks(callback) {
                     var testObj = dateToObj(new Date(Date.now()));
                     var currentEvents = itree.search(Date.now() / 10000); // convert to 10 second resolution
                     var results = [];
@@ -318,7 +318,19 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         return a.score - b.score;
                     });
                     results = results.slice(0, 20);
-                    linkData = results;
+
+                    async.each(results, function(result, callback) {
+                        $.get('http://' + result.host, function(data) {
+                            var doc = new DOMParser().parseFromString(data, 'text/xml');
+                            var xpathResult = doc.evaluate('//title', doc, null, XPathResult.STRING_TYPE, null);
+                            result.title = xpathResult.stringValue;
+                        }).always(callback);
+                    }, function(err) {
+                        linkData = results;
+                        if (typeof callback === 'function') {
+                            callback(err, results);
+                        }
+                    });
                 }
 
                 setInterval(function() {
@@ -330,7 +342,9 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     console.log("init()", "Incoming message", request, sender);
                     if (request.action == "getLinks") {
                         if (request.refresh) {
-                            getLinks();
+                            getLinks(function(err, linkData) {
+                                sendResponse(linkData);
+                            });
                         }
                         sendResponse(linkData);
                     } else if (request.action == "getWeather") {

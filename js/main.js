@@ -34,6 +34,8 @@ function renderLinks(response) {
             colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
         }
 
+        var title = response[i].title != '' ? response[i].title : response[i].host;
+
         var html = '<li class="link-item">'+
             '<a href="http://' + response[i].host + '">'+
             '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
@@ -41,7 +43,7 @@ function renderLinks(response) {
             colorBars +
             '</div>' +
             '<div class="contain">'+
-            '<div class="title">' + response[i].host + '</div>'+
+            '<div class="title">' + title + '</div>'+
             '<div class="link">' + response[i].host + '</div>'+
             '<div class="event">' + response[i].commonEvents.join(', ') + '</div>'+
             '</div>'+
