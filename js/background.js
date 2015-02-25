@@ -319,18 +319,11 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     });
                     results = results.slice(0, 20);
 
-                    async.each(results, function(result, callback) {
-                        $.get('http://' + result.host, function(data) {
-                            var doc = new DOMParser().parseFromString(data, 'text/xml');
-                            var xpathResult = doc.evaluate('//title', doc, null, XPathResult.STRING_TYPE, null);
-                            result.title = xpathResult.stringValue;
-                        }).always(callback);
-                    }, function(err) {
-                        linkData = results;
-                        if (typeof callback === 'function') {
-                            callback(err, results);
-                        }
-                    });
+                    linkData = results;
+                    if (typeof callback === 'function') {
+                        callback(err, results);
+                    }
+
                 }
 
                 setInterval(function() {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Tabpoll",
-  "version": "0.1",
+  "version": "0.1.0.1",
   "description": "Intelligently predictive new-tab engine to streamline your browsing experience.",
   "content_security_policy": "script-src 'self'; object-src 'self'",
   "icons": {
@@ -12,18 +12,18 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvYzq3dEfFaBMJCVMIBCq+9EbZWTkjjt6TdxL+BpcAw8GdohCpUNgn/AOC12C/diO1RDYYW/YxYLK1IxSQHuccQfyrAgOsOAdljQbNHf6eX2GpHXV5qhutxFN9L+qsWiSRLM3OsEDwq2gnPySu95UyaE+3GW+0+DjLGa6nHiFQIFbwbfTNUFwHw25QEa5BFJj9/eY8Xt1HzA9tb/h6bzDnEN2X8eQtgXg7xYxiT82pbgUGjyqXrnukjT2GjYk6mVp86RVcyh/YTGMkE94qFfMAdmJukZO9z5L6SYHGcWfN5G1U7ZwChy3u9rZT9z0JSOYPcWwvZp5roKMmqSGdyI92QIDAQAB",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1bj21BesHGWeNSEsjWCuNoa6CJtmgjHSw2wXHM+gC7NYavTnacU4dHTwrfA1yVhhx1tvcQ8EddSq5FbtfczZKq0HP1EicXz4zCiP5c9XK0bd0Iul2LIFN7RW3WdnGddnqg8Y/m52QeBgJobxR6lCx5RlVipB9klx9DjPsm3vtw2XPhocm7Y9JWirTqgLSXzsripN9V58uingaFMtaO6eXxM5uZrg2H0OIU/BK9pgfLSyZfLAKA7i8u217RX7c6MTpDJbGaem7kYCx8QXU93pi93jA2p4vk3ioQv20R1g6DczBSA10o7rZNzUaeAcVwew0jvxnc1dD5cQdADugW/szwIDAQAB",
   "permissions": [
-    "tabs",
+    //"tabs",
     "history",
     "storage",
     "geolocation",
     "identity",
-    "https://accounts.google.com/*",
-    "https://www.googleapis.com/*",
-    "chrome://favicon/*",
-    "http://*/",
-    "https://*/"
+    //"https://accounts.google.com/*",
+    //"https://www.googleapis.com/*",
+    "chrome://favicon/*"
+    //"http://*/",
+    //"https://*/"
   ],
   "background": {
     "scripts": [
@@ -37,7 +37,7 @@
   "oauth2": {
     "client_id":"1045571478564-39o43fllhkid25mhsu2fvbb16j7ts2p3.apps.googleusercontent.com",
     "scopes": [
-      "https://mail.google.com/",
+      //"https://mail.google.com/",
       "https://www.googleapis.com/auth/calendar.readonly",
       "https://www.googleapis.com/auth/userinfo.profile"
     ]
