@@ -104,7 +104,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
 
                 },
                 success: function(cal_list) {
-                    console.log(cal_list);
+                    //console.log(cal_list);
                     callback(cal_list, null);
 
                 },
@@ -122,14 +122,12 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
             max_start = new Date(max_start).toISOString();
             var min_start = d.setMonth(d.getMonth()-2);
             min_start = new Date(min_start).toISOString();
-            console.log(min_start, max_start);
 
             get_cal_list(function (calendar_list, err) {
                 if (err) console.log(err);
+
                 calendars = calendars || calendar_list;
-                console.log(calendars);
-                var max = calendars.items.length;
-                var count = 1;
+                //console.log(calendars);
                 async.eachSeries(calendars.items, function(cal, callback) {
                     var cal_id = cal.id;
                     $.ajax({
@@ -141,27 +139,30 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                             "max_results": 2500,
                             "timeMin": min_start,
                             "timeMax": max_start,
-                            "singleEvents": false
+                            "singleEvents": true
                         },
                         success: function(cal_list) {
                             //console.log(cal_list);
                             events = events.concat(cal_list.items);
                         },
                         complete: function(){
-                          count++;
                             callback();
                         }
 
                     });
 
                 }, function() {
-
+                    //console.log(events);
                     var filtered_events = events.filter(function(evt){
-                        return evt.recurrence !== undefined;
+                        //if recurring events expanded
+                        return evt.recurringEventId !== undefined;
+
+                        //if recurring events not expanded
+                        //return evt.recurrence !== undefined;
                     });
                     console.log(filtered_events);
                     async.eachSeries(filtered_events, function(evt, callback) {
-                        console.log(evt.start.dateTime);
+                        //console.log(evt.start.dateTime);
                         var start = Date.parse(evt.start.dateTime || evt.start.date);
                         var end = Date.parse(evt.end.dateTime || evt.end.date);
                         if (start < end) {
@@ -170,12 +171,11 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         }
                         callback();
                     }, function() {
-                        console.log(itree.search(142176470,142196470));
-                        console.log(itree);
+                        //console.log(itree.search(142176470,142196470));
+                        //console.log(itree);
                     });
 
                 });
-                //while (count !=max){console.log(count,max);}
 
             });
         }
