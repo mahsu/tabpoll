@@ -22,7 +22,8 @@
     "geolocation",
     "identity",
     "https://accounts.google.com/*",
-    "https://www.googleapis.com/*"],
+    "https://www.googleapis.com/*",
+    "chrome://favicon/*"],
 
   "background": {
     "scripts": [

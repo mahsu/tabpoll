@@ -2,8 +2,8 @@ $(window).load(function () {
     chrome.runtime.sendMessage({action: "getLinks", date: Date.now()}, function(response) {
         for (var i=0; i<response.length; i++) {
             var html = '<li class="link-item">'+
-            '<a href="' + response[i][0] + '">'+
-            '<i><img src="http://96wefm.com/sites/all/themes/WEFM/images/fb-button.png" /></i>'+
+            '<a href="http://' + response[i][0] + '">'+
+            '<i><img src="chrome://favicon/http://' + response[i][0] + '" /></i>'+
             '<div class="contain">'+
             '<div class="title">' + response[i][0] + '</div>'+
             '<div class="link">' + response[i][0] + '</div>'+
