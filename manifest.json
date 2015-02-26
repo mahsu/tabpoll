@@ -6,7 +6,10 @@
   // Recommended
   "description": "A plain text description",
   "content_security_policy": "script-src 'self'; object-src 'self'",
-  //"icons": {},
+  "icons": {
+    "16": "ico/icon16.png",
+    "48": "ico/icon48.png",
+    "128": "ico/icon128.png" },
 
   "chrome_url_overrides": {
     "newtab": "index.html"
