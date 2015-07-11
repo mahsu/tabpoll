@@ -1,3 +1,4 @@
+"use strict";
 $(window).load(function () {
     var clock = new Clock();
     setInterval(function () {
@@ -13,7 +14,7 @@ $(window).load(function () {
 });
 
 function updateLinks(refresh) {
-    chrome.runtime.sendMessage({action: "getLinks", refresh: refresh}, function(response) {
+    chrome.runtime.sendMessage({action: "getLinks", refresh: refresh}, function (response) {
         renderLinks(response);
     });
 }
@@ -23,36 +24,36 @@ function renderLinks(response) {
     lastRendered = Date.now();
     console.log(response);
     $("#suggestions ul").html("");
-    for (var i=0; i<response.length; i++) {
+    for (let i = 0; i < response.length; i++) {
         var colors = [];
         var events = response[i].commonEvents;
         for (var j = 0; j < events.length; j++) {
             colors.push(hashColor(events[j]));
         }
-        colorBars = "";
+        var colorBars = "";
         for (var k = 0; k < colors.length; k++) {
             colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
         }
 
         var title = response[i].host;//response[i].title != '' ? response[i].title : response[i].host;
 
-        var html = '<li class="link-item">'+
-            '<a href="http://' + response[i].host + '">'+
-            '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>'+
-            '<div class="color-wrapper">'+
+        var html = '<li class="link-item">' +
+            '<a href="http://' + response[i].host + '">' +
+            '<i><img src="chrome://favicon/http://' + response[i].host + '" /></i>' +
+            '<div class="color-wrapper">' +
             colorBars +
             '</div>' +
-            '<div class="contain">'+
-            '<div class="title">' + title + '</div>'+
-            '<div class="link">' + response[i].host + '</div>'+
-            '<div class="event">' + response[i].commonEvents.join(', ') + '</div>'+
-            '</div>'+
-            '</a>'+
+            '<div class="contain">' +
+            '<div class="title">' + title + '</div>' +
+            '<div class="link">' + response[i].host + '</div>' +
+            '<div class="event">' + response[i].commonEvents.join(', ') + '</div>' +
+            '</div>' +
+            '</a>' +
             '</li>';
         $(html).appendTo("#suggestions ul");
     }
     var items = $('.link-item');
-    for (var i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
         $(items[i]).delay(30 * i).queue(function (next) {
             $(this).addClass("in");
             next();
@@ -63,12 +64,12 @@ function renderLinks(response) {
 var lastOffset = $("scroll-wrapper").scrollTop();
 var lastDate = new Date().getTime();
 
-chrome.storage.sync.get("given_name", function(item) {
+chrome.storage.sync.get("given_name", function (item) {
     $('#name').text(item.given_name);
 });
 
-chrome.storage.sync.get(function(item) {
-  console.log(item);
+chrome.storage.sync.get(function (item) {
+    console.log(item);
 });
 
 $("#scroll-wrapper").scroll(function (e) {
@@ -125,51 +126,16 @@ function getTime() {
     if (s.length < 2) {
         s = "0" + s;
     }
-    arr = [h[0], h[1], m[0], m[1], s[0], s[1]];
+    var arr = [h[0], h[1], m[0], m[1], s[0], s[1]];
 
-    var day_of_week = today.getDay();
+
+    const DAYS_OF_WEEK = "Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" ");
+    const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+
+    var day_of_week = DAYS_OF_WEEK[today.getDay()];
     var day = today.getDate();
-    var month = today.getMonth();
-    if (day_of_week == 0) {
-        day_of_week = "Sunday";
-    } else if (day_of_week == 1) {
-        day_of_week = "Monday";
-    } else if (day_of_week == 2) {
-        day_of_week = "Tuesday";
-    } else if (day_of_week == 3) {
-        day_of_week = "Wednesday";
-    } else if (day_of_week == 4) {
-        day_of_week = "Thursday";
-    } else if (day_of_week == 5) {
-        day_of_week = "Friday";
-    } else if (day_of_week == 6) {
-        day_of_week = "Saturday";
-    }
-    if (month == 0) {
-        month = "Jan"
-    } else if (month == 1) {
-        month = "Feb"
-    } else if (month == 2) {
-        month = "Mar"
-    } else if (month == 3) {
-        month = "Apr"
-    } else if (month == 4) {
-        month = "May"
-    } else if (month == 5) {
-        month = "Jun"
-    } else if (month == 6) {
-        month = "Jul"
-    } else if (month == 7) {
-        month = "Aug"
-    } else if (month == 8) {
-        month = "Sep"
-    } else if (month == 9) {
-        month = "Oct"
-    } else if (month == 10) {
-        month = "Nov"
-    } else if (month == 11) {
-        month = "Dec"
-    }
+    var month = MONTHS[today.getMonth()];
+
     $("#date").html(day_of_week + "<br/>" + month + " " + day);
     var hour = today.getHours();
     var greeting;
@@ -187,20 +153,20 @@ function getTime() {
 
 $(document).ready(function () {
     $('#topbar').animate({
-      opacity: 1
+        opacity: 1
     }, 800);
     $('#suggestions').animate({
-      opacity: 1,
-      top: 0
+        opacity: 1,
+        top: 0
     }, 400);
     $('#divider').animate({
-      width: "80%",
-      opacity: 1
+        width: "80%",
+        opacity: 1
     }, 500);
 });
 
 function getWeather() {
-    chrome.runtime.sendMessage({action: "getWeather"}, function(data) {
+    chrome.runtime.sendMessage({action: "getWeather"}, function (data) {
         if (data == null) return;
 
         var location = data.name;
@@ -290,27 +256,27 @@ Clock.prototype.update = function () {
     }
 };
 
-Number.prototype.map = function ( in_min , in_max , out_min , out_max ) {
-  return ( this - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
-}
+Number.prototype.map = function (in_min, in_max, out_min, out_max) {
+    return ( this - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
+};
 
-function hashColor(str){
+function hashColor(str) {
     if (str) {
-      var hash = 0;
-      if (str.length == 0) return hash;
-      for (i = 0; i < str.length; i++) {
-          char = str.charCodeAt(i);
-          hash = ((hash<<5)-hash)+char;
-          hash = hash & hash;
-      }
-      var hue = (Math.abs(hash) % 360)/360;
-      return HSVtoRGB(hue, 1, 0.7);
+        var hash = 0;
+        if (str.length == 0) return hash;
+        for (i = 0; i < str.length; i++) {
+            var char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        var hue = (Math.abs(hash) % 360) / 360;
+        return HSVtoRGB(hue, 1, 0.7);
     } else {
-      return {
-        r: 255,
-        g: 255,
-        b: 255
-      }
+        return {
+            r: 255,
+            g: 255,
+            b: 255
+        }
     }
 }
 
@@ -325,12 +291,24 @@ function HSVtoRGB(h, s, v) {
     q = v * (1 - f * s);
     t = v * (1 - (1 - f) * s);
     switch (i % 6) {
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
+        case 0:
+            r = v, g = t, b = p;
+            break;
+        case 1:
+            r = q, g = v, b = p;
+            break;
+        case 2:
+            r = p, g = v, b = t;
+            break;
+        case 3:
+            r = p, g = q, b = v;
+            break;
+        case 4:
+            r = t, g = p, b = v;
+            break;
+        case 5:
+            r = v, g = p, b = q;
+            break;
     }
     return {
         r: Math.floor(r * 255),
