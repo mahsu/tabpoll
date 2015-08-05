@@ -138,7 +138,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     var cal_id = cal.id;
                     $.ajax({
                         method: 'GET',
-                        url: "https://www.googleapis.com/calendar/v3/calendars/" + cal_id + "/events",
+                        url: "https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(cal_id) + "/events",
                         data: {
                             "alt": "json",
                             "access_token": current_token,
