@@ -83,6 +83,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         Array.prototype.push.apply(visits, items.map(function (item) {
                             return {
                                 url: result.url,
+                                title: result.title,
                                 visitTime: item.visitTime
                             };
                         }));
@@ -218,6 +219,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     var date = new Date(item.visitTime);
                     var obj = dateToObj(date);
                     obj.url = item.url;
+                    obj.title = item.title;
                     obj.visitTime = item.visitTime;
                     var host = getHost(item.url);
                     if (!sites.hasOwnProperty(host)) {
@@ -280,6 +282,19 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     return commonEvents;
                 }
 
+                function titleForHost(host) {
+                    let site = sites[host];
+                    var title = site[0].title;
+                    var shortestUrlLength = site[0].url.length;
+                    for (var i = 1; i < site.length; i++) {
+                        if (site[i].url.length < shortestUrlLength) {
+                            shortestUrlLength = site[i].url.length;
+                            title = site[i].title;
+                        }
+                    }
+                    return title;
+                }
+
                 function getLinks(callback) {
                     var testObj = dateToObj(new Date(Date.now()));
                     var currentEvents = itree.search(Date.now() / 10000); // convert to 10 second resolution
@@ -313,6 +328,7 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                         }
                         results.push({
                             host: host,
+                            title: titleForHost(host),
                             score: score,
                             commonEvents: commonEvents
                         });

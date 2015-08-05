@@ -35,7 +35,7 @@ function renderLinks(response) {
             colorBars += '<div class="colorBar" style="background-color: rgb(' + colors[k].r + ',' + colors[k].g + ',' + colors[k].b + ')"></div>';
         }
 
-        var title = response[i].host;//response[i].title != '' ? response[i].title : response[i].host;
+        var title = response[i].title || response[i].host;
 
         var html = '<li class="link-item">' +
             '<a href="http://' + response[i].host + '">' +
