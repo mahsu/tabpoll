@@ -286,12 +286,13 @@ requirejs(['async', 'node/interval-tree/IntervalTree', 'node/alike/main'],
                     let site = sites[host];
                     var title = site[0].title;
                     var shortestUrlLength = site[0].url.length;
-                    for (var i = 1; i < site.length; i++) {
+                    for (let i = 1; i < site.length; i++) {
                         if (site[i].url.length < shortestUrlLength) {
                             shortestUrlLength = site[i].url.length;
                             title = site[i].title;
                         }
                     }
+
                     return title;
                 }
 
